@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30717.126
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "USB", "USB\USB.csproj", "{5616B556-4341-4AF7-9236-9F787B9B7CEB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5616B556-4341-4AF7-9236-9F787B9B7CEB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5616B556-4341-4AF7-9236-9F787B9B7CEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5616B556-4341-4AF7-9236-9F787B9B7CEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5616B556-4341-4AF7-9236-9F787B9B7CEB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D070ED83-A15A-48D4-A850-4CBBE63E73BC}
+	EndGlobalSection
+EndGlobal
