@@ -5,13 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:USB"
         mc:Ignorable="d"
-        Title="USBHUB   TOPO" Height="200" Width="420" Initialized="Window_Initialized">
+        Title="USBHUB   TOPO" Height="120" Width="410" Initialized="Window_Initialized">
     <Grid>
         <ComboBox x:Name="comboBox" HorizontalAlignment="Left"  VerticalAlignment="Top" Width="120"/>
         <Button x:Name="button" Content="连接" HorizontalAlignment="Left" Margin="122,0,0,0" VerticalAlignment="Top" Width="76" Click="button_Click"/>
         <Button x:Name="button1" Content="关闭" HorizontalAlignment="Left" Margin="201,0,0,0" VerticalAlignment="Top" Width="75" Click="button1_Click"/>
         <Border x:Name="OpenShow"  Background="Red" CornerRadius="20" Height="20" Width="20"  VerticalAlignment="Top" HorizontalAlignment="Right"/>
-        <Grid Height="100" Width="400">
+        <Grid Height="30" Width="400" VerticalAlignment="Bottom">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
@@ -23,38 +23,25 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-            <Button Grid.Column="0" Grid.Row="1" Click="Send_Click" Content="1开" Tag="0x31"/>
-            <Button Grid.Column="1" Grid.Row="1" Click="Send_Click" Content="2开" Tag="0x32"/>
-            <Button Grid.Column="2" Grid.Row="1" Click="Send_Click" Content="3开" Tag="0x33"/>
-            <Button Grid.Column="3" Grid.Row="1" Click="Send_Click" Content="4开" Tag="0x34"/>
-            <Button Grid.Column="4" Grid.Row="1" Click="Send_Click" Content="5开" Tag="0x35"/>
-            <Button Grid.Column="5" Grid.Row="1" Click="Send_Click" Content="6开" Tag="0x36"/>
-            <Button Grid.Column="6" Grid.Row="1" Click="Send_Click" Content="7开" Tag="0x37"/>
-            <Button Grid.Column="7" Grid.Row="1" Click="Send_Click" Content="8开" Tag="0x38"/>
-            <Button Grid.Column="8" Grid.Row="1" Click="Send_Click" Content="9开" Tag="0x39"/>
-            <Button Grid.Column="0" Grid.Row="2" Click="Send_Click" Content="1关" Tag="0x61"/>
-            <Button Grid.Column="1" Grid.Row="2" Click="Send_Click" Content="2关" Tag="0x62"/>
-            <Button Grid.Column="2" Grid.Row="2" Click="Send_Click" Content="3关" Tag="0x63"/>
-            <Button Grid.Column="3" Grid.Row="2" Click="Send_Click" Content="4关" Tag="0x64"/>
-            <Button Grid.Column="4" Grid.Row="2" Click="Send_Click" Content="5关" Tag="0x65"/>
-            <Button Grid.Column="5" Grid.Row="2" Click="Send_Click" Content="6关" Tag="0x66"/>
-            <Button Grid.Column="6" Grid.Row="2" Click="Send_Click" Content="7关" Tag="0x67"/>
-            <Button Grid.Column="7" Grid.Row="2" Click="Send_Click" Content="8关" Tag="0x68"/>
-            <Button Grid.Column="8" Grid.Row="2" Click="Send_Click" Content="9关" Tag="0x69"/>
-            <Border x:Name="Show1" Grid.Column="0" Grid.Row="0" Background="Red" CornerRadius="20" Height="20" Width="20"/>
-            <Border x:Name="Show2" Grid.Column="1" Grid.Row="0" Background="Red" CornerRadius="20" Height="20" Width="20"/>
-            <Border x:Name="Show3" Grid.Column="2" Grid.Row="0" Background="Red" CornerRadius="20" Height="20" Width="20"/>
-            <Border x:Name="Show4" Grid.Column="3" Grid.Row="0" Background="Red" CornerRadius="20" Height="20" Width="20"/>
-            <Border x:Name="Show5" Grid.Column="4" Grid.Row="0" Background="Red" CornerRadius="20" Height="20" Width="20"/>
-            <Border x:Name="Show6" Grid.Column="5" Grid.Row="0" Background="Red" CornerRadius="20" Height="20" Width="20"/>
-            <Border x:Name="Show7" Grid.Column="6" Grid.Row="0" Background="Red" CornerRadius="20" Height="20" Width="20"/>
-            <Border x:Name="Show8" Grid.Column="7" Grid.Row="0" Background="Red" CornerRadius="20" Height="20" Width="20"/>
-            <Border x:Name="Show9" Grid.Column="8" Grid.Row="0" Background="Red" CornerRadius="20" Height="20" Width="20"/>
+            <Border x:Name="Show1" Grid.Column="0" Background="Red" CornerRadius="20" Height="20" Width="20"/>
+            <Border x:Name="Show2" Grid.Column="1" Background="Red" CornerRadius="20" Height="20" Width="20"/>
+            <Border x:Name="Show3" Grid.Column="2" Background="Red" CornerRadius="20" Height="20" Width="20"/>
+            <Border x:Name="Show4" Grid.Column="3" Background="Red" CornerRadius="20" Height="20" Width="20"/>
+            <Border x:Name="Show5" Grid.Column="4" Background="Red" CornerRadius="20" Height="20" Width="20"/>
+            <Border x:Name="Show6" Grid.Column="5" Background="Red" CornerRadius="20" Height="20" Width="20"/>
+            <Border x:Name="Show7" Grid.Column="6" Background="Red" CornerRadius="20" Height="20" Width="20"/>
+            <Border x:Name="Show8" Grid.Column="7" Background="Red" CornerRadius="20" Height="20" Width="20"/>
+            <Border x:Name="Show9" Grid.Column="8" Background="Red" CornerRadius="20" Height="20" Width="20"/>
+
+            <Button x:Name="Button1" Template="{StaticResource imageButtonTemplate}" Grid.Column="0" Click="Send_Click" Content="1" Tag="1"/>
+            <Button x:Name="Button2" Template="{StaticResource imageButtonTemplate}" Grid.Column="1" Click="Send_Click" Content="2" Tag="1"/>
+            <Button x:Name="Button3" Template="{StaticResource imageButtonTemplate}" Grid.Column="2" Click="Send_Click" Content="3" Tag="1"/>
+            <Button x:Name="Button4" Template="{StaticResource imageButtonTemplate}" Grid.Column="3" Click="Send_Click" Content="4" Tag="1"/>
+            <Button x:Name="Button5" Template="{StaticResource imageButtonTemplate}" Grid.Column="4" Click="Send_Click" Content="5" Tag="1"/>
+            <Button x:Name="Button6" Template="{StaticResource imageButtonTemplate}" Grid.Column="5" Click="Send_Click" Content="6" Tag="1"/>
+            <Button x:Name="Button7" Template="{StaticResource imageButtonTemplate}" Grid.Column="6" Click="Send_Click" Content="7" Tag="1"/>
+            <Button x:Name="Button8" Template="{StaticResource imageButtonTemplate}" Grid.Column="7" Click="Send_Click" Content="8" Tag="1"/>
+            <Button x:Name="Button9" Template="{StaticResource imageButtonTemplate}" Grid.Column="8" Click="Send_Click" Content="9" Tag="1"/>
         </Grid>
 
 
@@ -65,7 +52,6 @@
 
 
 
-
-
     </Grid>
+
 </Window>
