@@ -5,13 +5,12 @@ namespace USBHelper
 {
     public static class USBHelper
     {
-        public static SerialPort serialPort;
-        private static bool Open = false;
+        public static SerialPort serialPort = new SerialPort { };
         public static int OpenPort(string PortName)
         {
             try
             {
-                if (!Open)
+                if (!serialPort.IsOpen)
                 {
                     serialPort = new SerialPort { PortName = PortName, BaudRate = 9600 };
                     serialPort.Open();
@@ -30,7 +29,6 @@ namespace USBHelper
                             {
                                 if (buff[0] == 115)
                                 {
-                                    Open = true;
                                     //serialPort.DataReceived += new SerialDataReceivedEventHandler(DataReceived);
                                     return 0;
                                 }
@@ -54,7 +52,6 @@ namespace USBHelper
 
         public static int Close()
         {
-            Open = false;
             if (serialPort.IsOpen)
             {
                 serialPort.Close();
