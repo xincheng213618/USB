@@ -2,18 +2,11 @@
 using System.Collections.Generic;
 using System.IO.Ports;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace USB
 {
@@ -48,26 +41,34 @@ namespace USB
             Open();
         }
 
+
+        
+
+
         public void Open()
         {
-            int Code = USBHelper.OpenPort(comboBox.Text);
+            int Code = USBHelper.USBHelper.OpenPort(comboBox.Text);
             OpenShow.Background = Code != 0 ? Brushes.Red : Brushes.Green;
             if (Code == 0)
             {
-                USBHelper.serialPort.DataReceived += new SerialDataReceivedEventHandler(DataReceived);
+                USBHelper.USBHelper.serialPort.DataReceived += new SerialDataReceivedEventHandler(DataReceived);
                 Dispatcher.BeginInvoke(new Action(() => GetCurrentStatus()));
+            }
+            else
+            {
+                MessageBox.Show("连不上服务器");
             }
         }
 
 
 
 
-        private void GetCurrentStatus()
+        private async void GetCurrentStatus()
         {
             for (int i = 1; i < 10; i++)
             {
-                Thread.Sleep(110);
-                USBHelper.SendMsg(i, 2);
+                await Task.Delay(170);
+                USBHelper.USBHelper.SendMsg(i, 2);
             }
         }
 
@@ -118,8 +119,8 @@ namespace USB
 
         private void button1_Click(object sender, RoutedEventArgs e)
         {
-            USBHelper.Close();
-            USBHelper.serialPort.DataReceived -= new SerialDataReceivedEventHandler(DataReceived);
+            USBHelper.USBHelper.Close();
+            USBHelper.USBHelper.serialPort.DataReceived -= new SerialDataReceivedEventHandler(DataReceived);
             OpenShow.Background = Brushes.Red;
         }
 
@@ -129,44 +130,14 @@ namespace USB
         private void Send_Click(object sender, RoutedEventArgs e)
         {
             Button button = sender as Button;
-            USBHelper.SendMsg(int.Parse(button.Content.ToString()), int.Parse(button.Tag.ToString()));
+            USBHelper.USBHelper.SendMsg(int.Parse(button.Content.ToString()), int.Parse(button.Tag.ToString()));
         }
 
 
         int nchange = 0;
 
-        private unsafe void button2_Click(object sender, RoutedEventArgs e)
+        private void button2_Click_1(object sender, RoutedEventArgs e)
         {
-            Button button = sender as Button;
-            switch (button.Tag)
-            {
-                case "Open":
-                    int i = ID_FprCap.LIVESCAN_Init();
-                    nchange = ID_FprCap.LIVESCAN_GetChannelCount();
-                    MessageBox.Show(i==1?"采集器初始化成功": ID_FprCap.Code[i]);
-                    break;
-                case "Close":
-                     i = ID_FprCap.LIVESCAN_Close();
-                    MessageBox.Show(i == 1 ? "采集器关闭成功" : ID_FprCap.Code[i]);
-                    break;
-                case "BeginCapture":
-                    i = ID_FprCap.LIVESCAN_BeginCapture(nchange);
-                    MessageBox.Show(i == 1 ? "采集准备完成" : ID_FprCap.Code[i]);
-                    break;
-                case "GetFPRawData":
-                    //string pRawData =null;
-                    //i = ID_FprCap.LIVESCAN_GetFPRawData(nchange, ref pRawData);
-                    //MessageBox.Show(i == 1 ? "获取成功是否保存" : ID_FprCap.Code[i]);
-                    int j = 0;
-                    i = ID_FprCap.LIVESCAN_GetBright(nchange,ref j);
-                    MessageBox.Show(i.ToString());
-
-
-
-                    break;
-
-
-            }
 
         }
     }

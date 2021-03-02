@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:USB"
         mc:Ignorable="d"
-        Title="USBHUB   TOPO" Height="120" Width="410" Initialized="Window_Initialized">
+        Title="USBHUB   TOPO" Height="100" Width="400" Initialized="Window_Initialized">
     <Grid>
         <ComboBox x:Name="comboBox" HorizontalAlignment="Left"  VerticalAlignment="Top" Width="120"/>
         <Button x:Name="button" Content="连接" HorizontalAlignment="Left" Margin="122,0,0,0" VerticalAlignment="Top" Width="76" Click="button_Click"/>
@@ -43,15 +43,6 @@
             <Button x:Name="Button8" Template="{StaticResource imageButtonTemplate}" Grid.Column="7" Click="Send_Click" Content="8" Tag="1"/>
             <Button x:Name="Button9" Template="{StaticResource imageButtonTemplate}" Grid.Column="8" Click="Send_Click" Content="9" Tag="1"/>
         </Grid>
-
-
-        <Button  Content="连接设备" HorizontalAlignment="Left" Margin="270,325,0,0" VerticalAlignment="Top" Width="75" Click="button2_Click" Tag="Open"/>
-        <Button  Content="关闭设备" HorizontalAlignment="Left" Margin="270,351,0,0" VerticalAlignment="Top" Width="75" Click="button2_Click" Tag="Close"/>
-        <Button  Content="准备采集" HorizontalAlignment="Left" Margin="270,379,0,0" VerticalAlignment="Top" Width="75" Click="button2_Click" Tag="BeginCapture"/>
-        <Button  Content="准备采集1帧" HorizontalAlignment="Left" Margin="270,379,0,0" VerticalAlignment="Top" Width="75" Click="button2_Click" Tag="GetFPRawData"/>
-
-
-
+        <Button x:Name="button2" Content="Button" HorizontalAlignment="Left" Margin="277,1,0,0" VerticalAlignment="Top" Width="75"  Click="button2_Click_1"/>
     </Grid>
-
 </Window>
