@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:USB"
         mc:Ignorable="d"
-        Title="江苏同袍USB控制器" Background="#f6f6f6" Height="300" Width="400" ResizeMode="NoResize" Initialized="Window_Initialized">
+        Title="江苏同袍USB控制器" Background="#f6f6f6" Height="300" Width="290" ResizeMode="NoResize" Initialized="Window_Initialized">
     <Grid>
 
         <Grid>
@@ -43,10 +43,10 @@
             <!--<Button x:Name="button" Content="连接" HorizontalAlignment="Left" Margin="122,0,0,0" VerticalAlignment="Top" Width="76" Click="button_Click"/>-->
             <!--<Button x:Name="button1" Content="关闭" HorizontalAlignment="Left" Margin="201,0,0,0" VerticalAlignment="Top" Width="75" Click="button1_Click"/>-->
 
-            <Border x:Name="OpenShow"  Background="Red" CornerRadius="20" Height="20" Width="20"  VerticalAlignment="Top" HorizontalAlignment="Right"/>
+            <Border x:Name="OpenShow"  Background="Gray" CornerRadius="0" Height="20" Width="20"  VerticalAlignment="Top" HorizontalAlignment="Right"/>
 
 
-            <Border Height="150" Width="150"  Background="White" VerticalAlignment="Bottom" Margin="0,30" CornerRadius="15">
+            <Border Height="150" Width="150"  Background="White" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="30,30" CornerRadius="15">
                 <Grid >
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
@@ -78,12 +78,15 @@
                     <Button x:Name="Button9" Template="{StaticResource imageButtonTemplate}" Grid.Row="2" Grid.Column="2" Click="Send_Click" Content="9" Tag="1"/>
                 </Grid>
             </Border>
-            <Label Content="技术支持：南京保通电讯有限公司" VerticalAlignment="Bottom" HorizontalAlignment="Center"/>
+            <Label Content="技术支持：南京保通电讯有限公司" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,5,3"/>
+            <Label HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10" >
+                <TextBlock Text="灰色代表该USB未启用&#x000d;&#x000a;红色代表改USB正常打开&#x000d;&#x000a;可通过左侧预设命令进行控制&#x000d;&#x000a;也可以点击对应的按钮" AllowDrop="True" TextWrapping="Wrap"  />
+            </Label>
         </Grid>
 
 
 
-        <Grid x:Name="ErrorGrid" Background="AliceBlue" Opacity="0.9" Visibility="Hidden" >
+        <Grid x:Name="ErrorGrid" Background="AliceBlue" Opacity="0.9"  >
             <Grid.Style>
                 <Style TargetType="Grid">
                     <Style.Triggers>
@@ -93,19 +96,18 @@
                     </Style.Triggers>
                     <Setter Property="Visibility" Value="Visible"/>
                 </Style>
-
             </Grid.Style>
-            <Button Template="{StaticResource imageButtonTemplate}"  Click="Refresh_Click">
-                <Grid Width="342">
-                    <Image x:Name="RefreshImage" Source="images/刷新 (1).png" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,5,5,40"  Stretch="Uniform" RenderTransformOrigin="0.5,0.5" />
-                    <Grid Height="30" VerticalAlignment="Top">
-                        <Image Source="images/usb.png"></Image>
-                    </Grid>
-                    <Label x:Name="ErrorLabel" Content="连接失败"  HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" FontSize="30" />
-                    <Label Content="请检测usb是否正常连接，点击刷新重试" HorizontalAlignment="Center" VerticalAlignment="Bottom" FontWeight="Bold" />
-                </Grid>
+            <Image Source="images/usb.png" Opacity="0.1 "/>
+            <Grid Margin="30,50">
+                <Label x:Name="ErrorLabel" Content="正在尝试连接"  HorizontalAlignment="Center" Foreground="Red" VerticalAlignment="Center" FontWeight="Bold" FontSize="30" />
+                <Label Content="请检测usb是否正常连接，点击刷新重试" HorizontalAlignment="Center" VerticalAlignment="Bottom" FontWeight="Bold" />
+            </Grid>
+            <Button Template="{StaticResource imageButtonTemplate}"  VerticalAlignment="Top" HorizontalAlignment="Center" Click="Refresh_Click" Margin="20">
+                <Image x:Name="RefreshImage" Source="images/refresh.png"  Height="50" Width="50" Stretch="Uniform" RenderTransformOrigin="0.5,0.5" />
             </Button>
         </Grid>
+
+
 
     </Grid>
 </Window>

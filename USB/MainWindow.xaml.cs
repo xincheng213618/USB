@@ -20,26 +20,15 @@ namespace USB
         {
             InitializeComponent();
         }
-        private SerialPort serialPort =null;
-
         List<Border> ShowBorders;
         List<Button> ClickButton;
-        Dictionary<int, int> CurrentKeyValuePairs = new Dictionary<int, int>
-        {
-            {0,0},
-            {1,0},
-            {2,0},
-            {3,0},
-            {4,0},
-            {5,0},
-            {6,0},
-            {7,0},
-            {8,0},
-        };
+        Dictionary<int, int> CurrentKeyValuePairs;
+
         private Timer timer;
 
         private void Window_Initialized(object sender, EventArgs e)
         {
+            CurrentKeyValuePairs = NumsToDic(new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 });
             timer = new Timer(_ => Dispatcher.BeginInvoke(new Action(() => TimeRun())), null, 0, 1000);//本来是60，不过没必要刷新这么快，就1s1次就好。
 
             ShowBorders = new List<Border> { Show1, Show2, Show3, Show4, Show5, Show6, Show7, Show8, Show9 };
@@ -121,7 +110,7 @@ namespace USB
                 {
                     if (ErrorGrid.Opacity == 0)
                     {
-                        ErrorShow(0, 0.9, 2);
+                        ErrorShow(0, 0.9, 1);
                     }
                     else
                     {
@@ -134,7 +123,7 @@ namespace USB
             {
                 if (ErrorGrid.Opacity == 0)
                 {
-                    ErrorShow(0, 0.9, 2);
+                    ErrorShow(0, 0.9, 1);
                 }
                 else
                 {

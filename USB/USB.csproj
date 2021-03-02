@@ -115,8 +115,5 @@
   <ItemGroup>
     <Resource Include="Images\refresh.png" />
   </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\刷新 %281%29.png" />
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
