@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using USBDLL;
 
 namespace USB
 {
@@ -22,13 +23,11 @@ namespace USB
         }
         List<Border> ShowBorders;
         List<Button> ClickButton;
-        Dictionary<int, int> CurrentKeyValuePairs;
+        Dictionary<int, int> SendKeyValuePairs;
 
         private Timer timer;
-
-        private void Window_Initialized(object sender, EventArgs e)
-        {
-            CurrentKeyValuePairs = NumsToDic(new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 });
+        private void Window_Initialized(object sender, EventArgs e)               
+        {     
             timer = new Timer(_ => Dispatcher.BeginInvoke(new Action(() => TimeRun())), null, 0, 1000);//本来是60，不过没必要刷新这么快，就1s1次就好。
 
             ShowBorders = new List<Border> { Show1, Show2, Show3, Show4, Show5, Show6, Show7, Show8, Show9 };
@@ -38,16 +37,15 @@ namespace USB
             for (int i = 0; i < PortNames.Count(); i++)
                 comboBox.Items.Add(PortNames[i]);   //将数组内容加载到comboBox控件中
             comboBox.SelectedIndex = 0;
+
             Open(comboBox.Text);
         }
-
-
 
         private void TimeRun()
         {
             if (ErrorGrid.Opacity == 0)
             {
-                if (!USBHelper.USBHelper.serialPort.IsOpen)
+                if (!Helper.serialPort.IsOpen)
                 {
                     ErrorLabel.Content = "失去连接";
                     ErrorShow(0, 0.9, 2);
@@ -69,6 +67,7 @@ namespace USB
 
             Open(comboBox.Text);
         }
+
         public void Rotate()
         {
             Storyboard storyboard = new Storyboard();//创建故事板
@@ -86,25 +85,20 @@ namespace USB
             storyboard.Children.Add(doubleAnimation);//将动画添加到动画板中
             storyboard.Begin(this.RefreshImage);//启动动画
         }
-        private void button_Click(object sender, RoutedEventArgs e)
-        {
-            Open(comboBox.Text);
-        }
-      
 
         public async void Open(string PortName)
         {
             await Task.Delay(1);
             if (PortName != null || PortName != "")
             {
-                int Code = USBHelper.USBHelper.OpenPort(PortName);
+                int Code = Helper.OpenPort(PortName);
                 OpenShow.Background = Code != 0 ? Brushes.Red : Brushes.Green;
                 if (Code == 0)
                 {
                     if (ErrorGrid.Opacity == 0.9)
                         ErrorShow(0.9, 0, 0.5);
-                    USBHelper.USBHelper.serialPort.DataReceived += new SerialDataReceivedEventHandler(DataReceived);
-                    GetCurrentStatus();
+                    Helper.serialPort.DataReceived += new SerialDataReceivedEventHandler(DataReceived);
+                    Helper.SendMsg(Util.NumsToDic(new int[] { 2, 2, 2, 2, 2, 2, 2, 2, 2 }));
                 }
                 else
                 {
@@ -138,31 +132,6 @@ namespace USB
             ErrorGrid.BeginAnimation(OpacityProperty, daV);
         }
 
-
-
-
-        private async void GetCurrentStatus()
-        {
-            for (int i = 1; i < 10; i++)
-            {
-                await Task.Delay(180);
-                USBHelper.USBHelper.SendMsg(i, 2);
-            }
-        }
-
-        private async void SendMsg(int[] nums ,int Func)
-        {
-            foreach (var num in nums)
-            {
-                await Task.Delay(180);
-                USBHelper.USBHelper.SendMsg(num, Func);
-            }
-        }
-
-
-
-
-
         private void DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
             SerialPort serialPort = sender as SerialPort;
@@ -175,126 +144,59 @@ namespace USB
             Dispatcher.BeginInvoke(new Action(() => Show(buff)));
         }
 
-        Dictionary<byte, int> keyValuePairs = new Dictionary<byte, int>
-        {
-            { 0x31,0},
-            { 0x32,1},
-            { 0x33,2},
-            { 0x34,3},
-            { 0x35,4},
-            { 0x36,5},
-            { 0x37,6},
-            { 0x38,7},
-            { 0x39,8},
-        };
+
 
         private void Show(byte[] buff)
         {
             if (buff.Length == 5)
             {
-                int num = keyValuePairs[buff[1]];
+                int num = Helper.CodeKeyValuePairs[buff[1]];
                 ShowBorders[num].Background = buff[3] == 48 ? Brushes.Gray : Brushes.Green;
                 ClickButton[num].Tag = buff[3] == 48 ? 1 : 0;
-                CurrentKeyValuePairs[num] = buff[3] == 48 ? 0 : 1;
+                Helper.CurrentKeyValuePairs[num] = buff[3] == 48 ? 0 : 1;
             }
         }
 
-
-
         private void button1_Click(object sender, RoutedEventArgs e)
         {
-            USBHelper.USBHelper.Close();
-            USBHelper.USBHelper.serialPort.DataReceived -= new SerialDataReceivedEventHandler(DataReceived);
+            Helper.Close();
+            Helper.serialPort.DataReceived -= new SerialDataReceivedEventHandler(DataReceived);
             OpenShow.Background = Brushes.Red;
         }
-
-
 
 
         private void Send_Click(object sender, RoutedEventArgs e)
         {
             Button button = sender as Button;
-            USBHelper.USBHelper.SendMsg(int.Parse(button.Content.ToString()), int.Parse(button.Tag.ToString()));
-        }
-
-        private void button2_Click_1(object sender, RoutedEventArgs e)
-        {
-            Button button = sender as Button;
-            int Function = int.Parse(button.Tag.ToString());
-            SendMsg(Function);
+            Helper.SendMsg(int.Parse(button.Content.ToString()), int.Parse(button.Tag.ToString()));
         }
 
 
-        Dictionary<int, int> SendKeyValuePairs;
-        Dictionary<int, int> TempKeyValuePairs;
 
-        private async void SendMsg(int Function)
-        {
-            SendKeyValuePairs = new Dictionary<int, int> { } ;
-
-            foreach (var item in CurrentKeyValuePairs)
-                SendKeyValuePairs.Add(item.Key, item.Value);
-
-
-
-            foreach (var item in SendKeyValuePairs)
-            {
-                if (item.Value != Function)
-                {
-                    await Task.Delay(180);
-                    USBHelper.USBHelper.SendMsg(item.Key+1, Function);
-                }
-            }
-        }
-
-        private async void SendMsg(Dictionary<int, int> keyValuePairs)
-        {
-            TempKeyValuePairs = new Dictionary<int, int> { };
-
-            foreach (var item in CurrentKeyValuePairs)
-                TempKeyValuePairs.Add(item.Key, item.Value);
-
-            foreach (var item in keyValuePairs)
-            {
-                if (TempKeyValuePairs[item.Key] != item.Value)
-                {
-                    await Task.Delay(180);
-                    USBHelper.USBHelper.SendMsg(item.Key + 1, item.Value);
-                }
-            }
-        }
 
         private void Function_Click(object sender, RoutedEventArgs e)
         {
             Button button = sender as Button;  
             switch (button.Tag)
             {
+                case "AllOpen":
+                    Helper.SendMsg(Util.NumsToDic(new int[] { 1, 1, 1, 1, 1, 1, 1, 1, 1 }));
+                    break;
+                case "AllClose":
+                    Helper.SendMsg(Util.NumsToDic(new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 }));
+                    break;
                 case "Gongan":
-                    SendKeyValuePairs = NumsToDic(new int[] { 1, 0, 1, 0, 1, 0, 1, 0,1});
-                    SendMsg(SendKeyValuePairs);
+                    Helper.SendMsg(Util.NumsToDic(new int[] { 1, 0, 1, 0, 1, 0, 1, 0, 1 }));
                     break;
                 case "Huji":
-                    SendKeyValuePairs = NumsToDic(new int[] { 1, 1, 0, 0, 0, 1, 1, 0,0 });
-                    SendMsg(SendKeyValuePairs);
+                    Helper.SendMsg(Util.NumsToDic(new int[] { 1, 1, 0, 0, 0, 1, 1, 0, 0 }));
                     break;
                 case "Waihui":
-                    SendKeyValuePairs = NumsToDic(new int[] { 0, 1, 0, 1, 1, 0, 0, 1,1 });
-                    SendMsg(SendKeyValuePairs);
+                    Helper.SendMsg(Util.NumsToDic(new int[] { 0, 1, 0, 1, 1, 0, 0, 1, 1 }));
                     break;
                 default:
                     break;
             }
-        }
-
-        private Dictionary<int, int> NumsToDic(int[] Nums)
-        {
-            Dictionary<int, int> keyValuePairs = new Dictionary<int, int> { };
-            for (int i = 0; i < Nums.Length; i++)
-            {
-                keyValuePairs.Add(i, Nums[i]);
-            }
-
-            return keyValuePairs;
         }
     }
 }

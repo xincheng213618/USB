@@ -19,10 +19,10 @@
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
                     <Border Grid.Row="0" Background="AliceBlue" Margin="3" CornerRadius="3,3,3,3">
-                        <Button  Template="{StaticResource imageButtonTemplate}" Content="全部开启" FontSize="12" FontWeight="Bold" Click="button2_Click_1" Tag="1"/>
+                        <Button  Template="{StaticResource imageButtonTemplate}" Content="全部开启" FontSize="12" FontWeight="Bold" Click="Function_Click" Tag="AllOpen"/>
                     </Border>
                     <Border Grid.Row="1" Background="AliceBlue" Margin="3" CornerRadius="3,3,3,3">
-                        <Button  Template="{StaticResource imageButtonTemplate}" Content="全部关闭" FontSize="12" FontWeight="Bold" Click="button2_Click_1" Tag="0"/>
+                        <Button  Template="{StaticResource imageButtonTemplate}" Content="全部关闭" FontSize="12" FontWeight="Bold" Click="Function_Click" Tag="AllClose"/>
                     </Border>
                     <Border Grid.Row="2" Background="AliceBlue" Margin="3" CornerRadius="3,3,3,3">
                         <Button Template="{StaticResource imageButtonTemplate}" Content="人口业务" FontSize="12" FontWeight="Bold" Click="Function_Click" Tag="Gongan"/>

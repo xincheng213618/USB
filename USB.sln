@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.30717.126
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "USB", "USB\USB.csproj", "{5616B556-4341-4AF7-9236-9F787B9B7CEB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "USBHelper", "USBHelper\USBHelper.csproj", "{3D103034-6A34-4641-9801-C567B55945E4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "USBDLL", "USBHelper\USBDLL.csproj", "{3D103034-6A34-4641-9801-C567B55945E4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -101,9 +101,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\USBHelper\USBHelper.csproj">
+    <ProjectReference Include="..\USBHelper\USBDLL.csproj">
       <Project>{3d103034-6a34-4641-9801-c567b55945e4}</Project>
-      <Name>USBHelper</Name>
+      <Name>USBDLL</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
