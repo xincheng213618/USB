@@ -23,106 +23,82 @@ namespace USB
         }
         List<Border> ShowBorders;
         List<Button> ClickButton;
-        Dictionary<int, int> SendKeyValuePairs;
+
+        List<Border> FunctionBorders;
 
         private Timer timer;
         private void Window_Initialized(object sender, EventArgs e)               
         {     
             timer = new Timer(_ => Dispatcher.BeginInvoke(new Action(() => TimeRun())), null, 0, 1000);//本来是60，不过没必要刷新这么快，就1s1次就好。
-
             ShowBorders = new List<Border> { Show1, Show2, Show3, Show4, Show5, Show6, Show7, Show8, Show9 };
             ClickButton = new List<Button> { Button1, Button2, Button3, Button4, Button5, Button6, Button7, Button8, Button9 };
-
-            string[] PortNames = SerialPort.GetPortNames();
-            for (int i = 0; i < PortNames.Count(); i++)
-                comboBox.Items.Add(PortNames[i]);   //将数组内容加载到comboBox控件中
-            comboBox.SelectedIndex = 0;
-
+            FunctionBorders = new List<Border> { AllOpenBorder, AllCloseBorder,GonganBorder, HujiBorder, WaihuiBorder };
+            GetComBox();
             Open(comboBox.Text);
         }
 
         private void TimeRun()
         {
             if (ErrorGrid.Opacity == 0)
-            {
                 if (!Helper.serialPort.IsOpen)
                 {
                     ErrorLabel.Content = "失去连接";
                     ErrorShow(0, 0.9, 2);
                 }
-            }
         }
 
         private void Refresh_Click(object sender, RoutedEventArgs e)
         {
             Rotate();
-            comboBox.Items.Clear();
-           
-            Dispatcher.BeginInvoke(new Action(() => ErrorLabel.Content = "正在重试"));
+            ErrorLabel.Content = "正在重试";
+            GetComBox();
+            Open(comboBox.Text);
+        }
 
+        private void GetComBox()
+        {
+            comboBox.Items.Clear();
             string[] PortNames = SerialPort.GetPortNames();
             for (int i = 0; i < PortNames.Count(); i++)
                 comboBox.Items.Add(PortNames[i]);   //将数组内容加载到comboBox控件中
             comboBox.SelectedIndex = 0;
-
-            Open(comboBox.Text);
         }
 
         public void Rotate()
         {
-            Storyboard storyboard = new Storyboard();//创建故事板
-            DoubleAnimation doubleAnimation = new DoubleAnimation();//实例化一个Double类型的动画
+            Storyboard storyboard = new Storyboard
+            {
+                SpeedRatio = 2//播放的数度
+            };//创建故事板
             RotateTransform rotate = new RotateTransform();//旋转转换实例
-            this.RefreshImage.RenderTransform = rotate;//给图片空间一个转换的实例
-            storyboard.SpeedRatio = 2;//播放的数度
-            //设置从0 旋转360度
-            doubleAnimation.From = 0;
-            doubleAnimation.To = 360;
-            doubleAnimation.Duration = new Duration(new TimeSpan(0, 0, 2));//播放时间长度为2秒
-            Storyboard.SetTarget(doubleAnimation, this.RefreshImage);//给动画指定对象
-            Storyboard.SetTargetProperty(doubleAnimation,
-            new PropertyPath("RenderTransform.Angle"));//给动画指定依赖的属性
+            RefreshImage.RenderTransform = rotate;//给图片空间一个转换的实例
+            DoubleAnimation doubleAnimation = new DoubleAnimation
+            {
+                From = 0,
+                To = 360,
+                Duration = new Duration(new TimeSpan(0, 0, 2))//播放时间长度为2秒
+            };
+            Storyboard.SetTarget(doubleAnimation, RefreshImage);//给动画指定对象
+            Storyboard.SetTargetProperty(doubleAnimation, new PropertyPath("RenderTransform.Angle"));//给动画指定依赖的属性
             storyboard.Children.Add(doubleAnimation);//将动画添加到动画板中
-            storyboard.Begin(this.RefreshImage);//启动动画
+            storyboard.Begin(RefreshImage);//启动动画
         }
 
         public async void Open(string PortName)
         {
             await Task.Delay(1);
-            if (PortName != null || PortName != "")
+            int Code = Helper.OpenPort(PortName);
+            OpenShow.Background = Code != 0 ? Brushes.Red : Brushes.Green;
+            if (Code == 0)
             {
-                int Code = Helper.OpenPort(PortName);
-                OpenShow.Background = Code != 0 ? Brushes.Red : Brushes.Green;
-                if (Code == 0)
-                {
-                    if (ErrorGrid.Opacity == 0.9)
-                        ErrorShow(0.9, 0, 0.5);
-                    Helper.serialPort.DataReceived += new SerialDataReceivedEventHandler(DataReceived);
-                    Helper.SendMsg(Util.NumsToDic(new int[] { 2, 2, 2, 2, 2, 2, 2, 2, 2 }));
-                }
-                else
-                {
-                    if (ErrorGrid.Opacity == 0)
-                    {
-                        ErrorShow(0, 0.9, 1);
-                    }
-                    else
-                    {
-                        ErrorLabel.Content = "连接失败";
-                    }
-
-                }
+                if (ErrorGrid.Opacity == 0.9)
+                    ErrorShow(0.9, 0, 0.5);
+                Helper.serialPort.DataReceived += new SerialDataReceivedEventHandler(DataReceived);
+                Helper.SendMsg(Util.NumsToDic(new int[] { 2, 2, 2, 2, 2, 2, 2, 2, 2 }));
             }
             else
             {
-                if (ErrorGrid.Opacity == 0)
-                {
-                    ErrorShow(0, 0.9, 1);
-                }
-                else
-                {
-                    ErrorLabel.Content = "连接失败";
-                }
+                ErrorLabel.Content = "连接失败";
             }
         }
 
@@ -136,15 +112,13 @@ namespace USB
         {
             SerialPort serialPort = sender as SerialPort;
             Thread.Sleep(50);
-
             int bytesread = serialPort.BytesToRead;
             byte[] buff = new byte[bytesread];
             serialPort.Read(buff, 0, bytesread);
-
+            //这里必须要用异步,返回原本线程
             Dispatcher.BeginInvoke(new Action(() => Show(buff)));
         }
-
-
+        private readonly BrushConverter Use1 = new BrushConverter();
 
         private void Show(byte[] buff)
         {
@@ -154,8 +128,42 @@ namespace USB
                 ShowBorders[num].Background = buff[3] == 48 ? Brushes.Gray : Brushes.Green;
                 ClickButton[num].Tag = buff[3] == 48 ? 1 : 0;
                 Helper.CurrentKeyValuePairs[num] = buff[3] == 48 ? 0 : 1;
+
+                foreach (Border border in FunctionBorders)
+                {
+                    border.Background = Brushes.AliceBlue;
+                }
+
+
+                if (Equals(Helper.CurrentKeyValuePairs,AllOpenkeys))
+                {
+                    AllOpenBorder.Background = (Brush)Use1.ConvertFromInvariantString("#ff8160"); 
+                }
+                else if(Equals(Helper.CurrentKeyValuePairs, AllClosekeys))
+                {
+                    AllCloseBorder.Background = (Brush)Use1.ConvertFromInvariantString("#ff8160");
+                }
+                else if (Equals(Helper.CurrentKeyValuePairs, Gongankeys))
+                {
+                    GonganBorder.Background = (Brush)Use1.ConvertFromInvariantString("#ff8160");
+                }
+                else if (Equals(Helper.CurrentKeyValuePairs, Hujikeys))
+                {
+                    HujiBorder.Background = (Brush)Use1.ConvertFromInvariantString("#ff8160");
+                }
+                else if (Equals(Helper.CurrentKeyValuePairs, Waihuikeys))
+                {
+                    WaihuiBorder.Background = (Brush)Use1.ConvertFromInvariantString("#ff8160");
+
+                }
+
             }
         }
+        public bool Equals(Dictionary<int,int> dict1, Dictionary<int, int> dict2)
+        {
+            return dict1.Keys.Count == dict2.Keys.Count &&dict1.Keys.All(k => dict2.ContainsKey(k) && object.Equals(dict2[k], dict1[k]));
+        }
+
 
         private void button1_Click(object sender, RoutedEventArgs e)
         {
@@ -163,16 +171,17 @@ namespace USB
             Helper.serialPort.DataReceived -= new SerialDataReceivedEventHandler(DataReceived);
             OpenShow.Background = Brushes.Red;
         }
-
-
         private void Send_Click(object sender, RoutedEventArgs e)
         {
             Button button = sender as Button;
-            Helper.SendMsg(int.Parse(button.Content.ToString()), int.Parse(button.Tag.ToString()));
+            Helper.SendMsg(int.Parse(button.Content.ToString())-1, int.Parse(button.Tag.ToString()));
         }
 
-
-
+        private readonly Dictionary<int, int> AllOpenkeys = Util.NumsToDic(new int[] { 1, 1, 1, 1, 1, 1, 1, 1, 1 });
+        private readonly Dictionary<int, int> AllClosekeys = Util.NumsToDic(new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 });
+        private readonly Dictionary<int, int> Gongankeys = Util.NumsToDic(new int[] { 1, 0, 1, 0, 1, 0, 1, 0, 1 });
+        private readonly Dictionary<int, int> Hujikeys = Util.NumsToDic(new int[] { 1, 1, 0, 0, 0, 1, 1, 0, 0 });
+        private readonly Dictionary<int, int> Waihuikeys = Util.NumsToDic(new int[] { 0, 1, 0, 1, 1, 0, 0, 1, 1 });
 
         private void Function_Click(object sender, RoutedEventArgs e)
         {
@@ -180,19 +189,19 @@ namespace USB
             switch (button.Tag)
             {
                 case "AllOpen":
-                    Helper.SendMsg(Util.NumsToDic(new int[] { 1, 1, 1, 1, 1, 1, 1, 1, 1 }));
+                    Helper.SendMsg(AllOpenkeys);
                     break;
                 case "AllClose":
-                    Helper.SendMsg(Util.NumsToDic(new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 }));
+                    Helper.SendMsg(AllClosekeys);
                     break;
                 case "Gongan":
-                    Helper.SendMsg(Util.NumsToDic(new int[] { 1, 0, 1, 0, 1, 0, 1, 0, 1 }));
+                    Helper.SendMsg(Gongankeys);
                     break;
                 case "Huji":
-                    Helper.SendMsg(Util.NumsToDic(new int[] { 1, 1, 0, 0, 0, 1, 1, 0, 0 }));
+                    Helper.SendMsg(Hujikeys);
                     break;
                 case "Waihui":
-                    Helper.SendMsg(Util.NumsToDic(new int[] { 0, 1, 0, 1, 1, 0, 0, 1, 1 }));
+                    Helper.SendMsg(Waihuikeys);
                     break;
                 default:
                     break;

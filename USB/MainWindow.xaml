@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:USB"
         mc:Ignorable="d"
-        Title="江苏同袍USB控制器" Background="#f6f6f6" Height="300" Width="290" ResizeMode="NoResize" Initialized="Window_Initialized">
+        Title="江苏同袍USB控制器" Background="#f6f6f6" Height="300" Width="320" ResizeMode="NoResize" Initialized="Window_Initialized">
     <Grid>
 
         <Grid>
@@ -18,19 +18,19 @@
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
-                    <Border Grid.Row="0" Background="AliceBlue" Margin="3" CornerRadius="3,3,3,3">
-                        <Button  Template="{StaticResource imageButtonTemplate}" Content="全部开启" FontSize="12" FontWeight="Bold" Click="Function_Click" Tag="AllOpen"/>
+                    <Border x:Name="AllOpenBorder" Grid.Row="0" Background="AliceBlue" Margin="3" CornerRadius="3,3,3,3">
+                        <Button Template="{StaticResource imageButtonTemplate}" Content="全部开启" FontSize="12" FontWeight="Bold" Click="Function_Click" Tag="AllOpen"/>
                     </Border>
-                    <Border Grid.Row="1" Background="AliceBlue" Margin="3" CornerRadius="3,3,3,3">
+                    <Border x:Name="AllCloseBorder" Grid.Row="1" Background="AliceBlue" Margin="3" CornerRadius="3,3,3,3">
                         <Button  Template="{StaticResource imageButtonTemplate}" Content="全部关闭" FontSize="12" FontWeight="Bold" Click="Function_Click" Tag="AllClose"/>
                     </Border>
-                    <Border Grid.Row="2" Background="AliceBlue" Margin="3" CornerRadius="3,3,3,3">
+                    <Border x:Name="GonganBorder" Grid.Row="2" Background="AliceBlue" Margin="3" CornerRadius="3,3,3,3">
                         <Button Template="{StaticResource imageButtonTemplate}" Content="人口业务" FontSize="12" FontWeight="Bold" Click="Function_Click" Tag="Gongan"/>
                     </Border>
-                    <Border Grid.Row="3" Background="AliceBlue" Margin="3" CornerRadius="3,3,3,3">
+                    <Border x:Name="HujiBorder" Grid.Row="3" Background="AliceBlue" Margin="3" CornerRadius="3,3,3,3">
                         <Button Template="{StaticResource imageButtonTemplate}" Content="出入境业务" FontSize="12" FontWeight="Bold" Click="Function_Click" Tag="Huji"/>
                     </Border>
-                    <Border Grid.Row="4" Background="AliceBlue" Margin="3" CornerRadius="3,3,3,3">
+                    <Border x:Name="WaihuiBorder" Grid.Row="4" Background="AliceBlue" Margin="3" CornerRadius="3,3,3,3">
                         <Button Template="{StaticResource imageButtonTemplate}" Content="车架管业务" FontSize="12" FontWeight="Bold" Click="Function_Click" Tag="Waihui"/>
                     </Border>
 
@@ -79,14 +79,28 @@
                 </Grid>
             </Border>
             <Label Content="技术支持：南京保通电讯有限公司" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,5,3"/>
-            <Label HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10" >
-                <TextBlock Text="灰色代表该USB未启用&#x000d;&#x000a;红色代表改USB正常打开&#x000d;&#x000a;可通过左侧预设命令进行控制&#x000d;&#x000a;也可以点击对应的按钮" AllowDrop="True" TextWrapping="Wrap"  />
-            </Label>
+
+            <Grid Height="70" Width="125" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="35,5" >
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Border  Grid.Row="0" Background="Gray" CornerRadius="20" Height="20" Width="20" HorizontalAlignment="Left"/>
+                <Label Grid.Row="0"  HorizontalAlignment="Center" VerticalAlignment="Center"  Content="：关闭"  FontSize="20"/>
+                <Border  Grid.Row="1" Background="Green" CornerRadius="20" Height="20" Width="20" HorizontalAlignment="Left"/>
+                <Label Grid.Row="1"  HorizontalAlignment="Center" VerticalAlignment="Center"  Content="：打开"  FontSize="20"/>
+
+
+                <!--<Label HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10" >
+                    <TextBlock Text="灰色代表该USB未启用&#x000d;&#x000a;绿色代表改USB正常打开&#x000d;&#x000a;可通过左侧预设命令进行控制&#x000d;&#x000a;也可以点击对应的按钮" AllowDrop="True" TextWrapping="Wrap"  />
+                </Label>-->
+            </Grid>
+
         </Grid>
 
 
 
-        <Grid x:Name="ErrorGrid" Background="AliceBlue" Opacity="0.9"  >
+        <Grid x:Name="ErrorGrid" Background="AliceBlue" Opacity="0.9" >
             <Grid.Style>
                 <Style TargetType="Grid">
                     <Style.Triggers>
@@ -100,7 +114,7 @@
             <Image Source="images/usb.png" Opacity="0.1 "/>
             <Grid Margin="30,50">
                 <Label x:Name="ErrorLabel" Content="正在尝试连接"  HorizontalAlignment="Center" Foreground="Red" VerticalAlignment="Center" FontWeight="Bold" FontSize="30" />
-                <Label Content="请检测usb是否正常连接，点击刷新重试" HorizontalAlignment="Center" VerticalAlignment="Bottom" FontWeight="Bold" />
+                <Label Content="请检测usb是否正常连接，点击刷新重试" HorizontalAlignment="Center" VerticalAlignment="Bottom" FontWeight="Bold" Height="43"  />
             </Grid>
             <Button Template="{StaticResource imageButtonTemplate}"  VerticalAlignment="Top" HorizontalAlignment="Center" Click="Refresh_Click" Margin="20">
                 <Image x:Name="RefreshImage" Source="images/refresh.png"  Height="50" Width="50" Stretch="Uniform" RenderTransformOrigin="0.5,0.5" />

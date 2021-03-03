@@ -76,10 +76,7 @@ namespace USBDLL
         public static void SendMsg(int Num, int Function)
         {
             if (serialPort.IsOpen)
-            {
-                Num -= 1;
                 serialPort.Write(new byte[7] { 0x61, 0x74, 0x73, (byte)CooCode[Num], 0x3D, (byte)FunctionCode[Function], 0x0D }, 0, 7);
-            }
         }
 
         public static async void SendMsg(Dictionary<int, int> keyValuePairs)
@@ -94,7 +91,7 @@ namespace USBDLL
                 if (TempKeyValuePairs[item.Key] != item.Value|| item.Value==2)
                 {
                     await Task.Delay(180);
-                    SendMsg(item.Key + 1, item.Value);
+                    SendMsg(item.Key, item.Value);
                 }
             }
         }
