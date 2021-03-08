@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using System.Windows.Threading;
 using USBDLL;
 
 namespace USB
@@ -42,13 +43,17 @@ namespace USB
             if (ErrorGrid.Opacity == 0)
                 if (!Helper.serialPort.IsOpen)
                 {
-                    ErrorLabel.Content = "失去连接";
+                    //ErrorLabel.Content = "失去连接";
                     ErrorShow(0, 0.9, 2);
-                }
+                    GetComBox();
+                    Open(comboBox.Text);
+                }   
         }
 
         private void Refresh_Click(object sender, RoutedEventArgs e)
         {
+            pageTimer.IsEnabled = false;
+            Countdown = 10;
             Rotate();
             ErrorLabel.Content = "正在重试";
             GetComBox();
@@ -61,7 +66,7 @@ namespace USB
             string[] PortNames = SerialPort.GetPortNames();
             for (int i = 0; i < PortNames.Count(); i++)
                 comboBox.Items.Add(PortNames[i]);   //将数组内容加载到comboBox控件中
-            comboBox.SelectedIndex = 0;
+            comboBox.SelectedIndex = 1;
         }
 
         public void Rotate()
@@ -90,7 +95,7 @@ namespace USB
             int Code = Helper.OpenPort(PortName);
             OpenShow.Background = Code != 0 ? Brushes.Red : Brushes.Green;
             if (Code == 0)
-            {
+            {                
                 if (ErrorGrid.Opacity == 0.9)
                     ErrorShow(0.9, 0, 0.5);
                 Helper.serialPort.DataReceived += new SerialDataReceivedEventHandler(DataReceived);
@@ -98,10 +103,34 @@ namespace USB
             }
             else
             {
-                ErrorLabel.Content = "连接失败";
+                //ErrorLabel.Content = "连接失败";
+                pageTimer = new DispatcherTimer()
+                {
+                    IsEnabled = true,
+                    Interval = TimeSpan.FromSeconds(1),
+                };
+                pageTimer.Tick += new EventHandler((sender, e) =>
+                {
+                  
+                    if (--Countdown >= 0)
+                    {
+                        ErrorLabel.Content = Countdown + "秒后自动重连";
+                    }
+                    else
+                    {
+                        pageTimer.IsEnabled = false;
+                        Countdown = 10;
+                        Rotate();
+                        GetComBox();
+                        Open(comboBox.Text);
+                    }
+
+                });
             }
         }
-
+        private DispatcherTimer pageTimer = null;
+        int Countdown = 10;
+       
         public void ErrorShow(double a,double b,double time)
         {
             DoubleAnimation daV = new DoubleAnimation(a, b, new Duration(TimeSpan.FromSeconds(time)));
