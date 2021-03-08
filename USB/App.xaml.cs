@@ -10,32 +10,6 @@ namespace USB
     /// </summary>
     public partial class App : Application
     {
-        App()
-        {
 
-
-            //启动委托
-            this.Startup += new StartupEventHandler(App_Startup);
-        }
-
-        private Mutex mutex;
-        private void App_Startup(object sender, StartupEventArgs e)
-        {
-
-            bool ret;
-            mutex = new Mutex(true, "ElectronicNeedleTherapySystem", out ret);
-            if (!ret)
-            {
-                Environment.Exit(0);
-            }
-        }
-
-        //启动
-        private void Application_Startup(object sender, StartupEventArgs e)
-        {
-            MainWindow window = new MainWindow();
-            window.Show();
-
-        }
     }
 }

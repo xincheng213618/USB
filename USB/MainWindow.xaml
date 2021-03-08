@@ -114,8 +114,9 @@
             <Image Source="images/usb.png" Opacity="0.1 "/>
             <Grid Margin="30,50">
                 <Label x:Name="ErrorLabel" Content="正在尝试连接"  HorizontalAlignment="Center" Foreground="Red" VerticalAlignment="Center" FontWeight="Bold" FontSize="30" />
-                <Label Content="请检测usb是否正常连接，点击刷新重试" HorizontalAlignment="Center" VerticalAlignment="Bottom" FontWeight="Bold" Height="43"  />
+                <Label Content="请检测usb是否正常连接，点击刷新立即重试" HorizontalAlignment="Center" VerticalAlignment="Bottom" FontWeight="Bold" Height="43"  />
             </Grid>
+            <Label x:Name="ErrorCountLabel" Content="10s 自动后尝试重新连接"  HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="10,20" Foreground="Red"  FontWeight="Bold" FontSize="10"  />
             <Button Template="{StaticResource imageButtonTemplate}"  VerticalAlignment="Top" HorizontalAlignment="Center" Click="Refresh_Click" Margin="20">
                 <Image x:Name="RefreshImage" Source="images/refresh.png"  Height="50" Width="50" Stretch="Uniform" RenderTransformOrigin="0.5,0.5" />
             </Button>

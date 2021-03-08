@@ -26,6 +26,9 @@ namespace USB
         List<Button> ClickButton;
 
         List<Border> FunctionBorders;
+        //倒计时检测
+        private DispatcherTimer pageTimer = null;
+        private int TempIndex = 0;
 
         private Timer timer;
         private void Window_Initialized(object sender, EventArgs e)               
@@ -35,27 +38,54 @@ namespace USB
             ClickButton = new List<Button> { Button1, Button2, Button3, Button4, Button5, Button6, Button7, Button8, Button9 };
             FunctionBorders = new List<Border> { AllOpenBorder, AllCloseBorder,GonganBorder, HujiBorder, WaihuiBorder };
             GetComBox();
-            Open(comboBox.Text);
+            OpenFast();
+
+
+            pageTimer = new DispatcherTimer() { IsEnabled = false, Interval = TimeSpan.FromSeconds(1)};
+            pageTimer.Tick += new EventHandler((sender1, e1) =>
+            {
+
+                if (--Countdown > 0)
+                {
+                    ErrorCountLabel.Content = Countdown + "秒后自动重连";
+                }
+                else
+                {
+                    ErrorLabel.Content = "正在重新连接";
+                    pageTimer.IsEnabled = false;
+                    Countdown = 10;
+                    GetComBox();
+                    Open(comboBox.Text);
+                }
+            });
         }
+
+        int Countdown = 10;
 
         private void TimeRun()
         {
             if (ErrorGrid.Opacity == 0)
                 if (!Helper.serialPort.IsOpen)
                 {
-                    //ErrorLabel.Content = "失去连接";
+                    ErrorLabel.Content = "失去连接";
                     ErrorShow(0, 0.9, 2);
-                    GetComBox();
-                    Open(comboBox.Text);
-                }   
+                    //做一个取不等判定
+                    if (!pageTimer.IsEnabled)
+                    {
+                        Countdown = 10;
+                        pageTimer.IsEnabled = true;
+                    }
+
+                }
         }
 
         private void Refresh_Click(object sender, RoutedEventArgs e)
         {
-            pageTimer.IsEnabled = false;
-            Countdown = 10;
+            if (pageTimer.IsEnabled)
+                pageTimer.IsEnabled = false;
+
             Rotate();
-            ErrorLabel.Content = "正在重试";
+            ErrorLabel.Content = "正在重新连接";
             GetComBox();
             Open(comboBox.Text);
         }
@@ -64,9 +94,10 @@ namespace USB
         {
             comboBox.Items.Clear();
             string[] PortNames = SerialPort.GetPortNames();
+            //这种写法不允许有多个串口；
             for (int i = 0; i < PortNames.Count(); i++)
                 comboBox.Items.Add(PortNames[i]);   //将数组内容加载到comboBox控件中
-            comboBox.SelectedIndex = 1;
+            comboBox.SelectedIndex = TempIndex;
         }
 
         public void Rotate()
@@ -89,13 +120,27 @@ namespace USB
             storyboard.Begin(RefreshImage);//启动动画
         }
 
-        public async void Open(string PortName)
+        public async void OpenFast()
         {
             await Task.Delay(1);
-            int Code = Helper.OpenPort(PortName);
+            int Code = -1 ;
+
+            for (int i = 0; i < comboBox.Items.Count; i++)
+            {
+                comboBox.SelectedIndex = i;
+                Code = Helper.OpenPort(comboBox.Text);
+                if (Code == 0)
+                {
+                    TempIndex = i;
+                    break;
+                }
+
+            }
+
             OpenShow.Background = Code != 0 ? Brushes.Red : Brushes.Green;
             if (Code == 0)
-            {                
+            {
+                pageTimer.IsEnabled = false;
                 if (ErrorGrid.Opacity == 0.9)
                     ErrorShow(0.9, 0, 0.5);
                 Helper.serialPort.DataReceived += new SerialDataReceivedEventHandler(DataReceived);
@@ -103,33 +148,35 @@ namespace USB
             }
             else
             {
-                //ErrorLabel.Content = "连接失败";
-                pageTimer = new DispatcherTimer()
-                {
-                    IsEnabled = true,
-                    Interval = TimeSpan.FromSeconds(1),
-                };
-                pageTimer.Tick += new EventHandler((sender, e) =>
-                {
-                  
-                    if (--Countdown >= 0)
-                    {
-                        ErrorLabel.Content = Countdown + "秒后自动重连";
-                    }
-                    else
-                    {
-                        pageTimer.IsEnabled = false;
-                        Countdown = 10;
-                        Rotate();
-                        GetComBox();
-                        Open(comboBox.Text);
-                    }
-
-                });
+                ErrorLabel.Content = "连接失败";
+                Countdown = 10;
+                pageTimer.IsEnabled = true;
             }
         }
-        private DispatcherTimer pageTimer = null;
-        int Countdown = 10;
+
+
+
+        public async void Open(string PortName)
+        {
+            await Task.Delay(1);
+            int Code = Helper.OpenPort(PortName);
+            OpenShow.Background = Code != 0 ? Brushes.Red : Brushes.Green;
+            if (Code == 0)
+            {
+                pageTimer.IsEnabled = false;
+                if (ErrorGrid.Opacity == 0.9)
+                    ErrorShow(0.9, 0, 0.5);
+                Helper.serialPort.DataReceived += new SerialDataReceivedEventHandler(DataReceived);
+                Helper.SendMsg(Util.NumsToDic(new int[] { 2, 2, 2, 2, 2, 2, 2, 2, 2 }));
+            }
+            else
+            {
+                ErrorLabel.Content = "连接失败";
+                Countdown = 10;
+                pageTimer.IsEnabled = true;
+            }
+        }
+
        
         public void ErrorShow(double a,double b,double time)
         {
@@ -194,12 +241,14 @@ namespace USB
         }
 
 
-        private void button1_Click(object sender, RoutedEventArgs e)
+        private void ServiceClose()
         {
             Helper.Close();
             Helper.serialPort.DataReceived -= new SerialDataReceivedEventHandler(DataReceived);
             OpenShow.Background = Brushes.Red;
         }
+
+
         private void Send_Click(object sender, RoutedEventArgs e)
         {
             Button button = sender as Button;

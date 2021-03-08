@@ -115,5 +115,10 @@
   <ItemGroup>
     <Resource Include="Images\refresh.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Driver\wch_ch340_33_64_316.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
