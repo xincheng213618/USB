@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.IO.Ports;
 using System.Linq;
 using System.Threading;
@@ -31,8 +32,64 @@ namespace USB
         private int TempIndex = 0;
 
         private Timer timer;
+
+        private static string ConfigPath = Environment.CurrentDirectory + "/config.ini";
+        IniFiles IniFiles = new IniFiles(ConfigPath);
+
+        private static int[] key0 = new int[] { 1, 1, 1, 1, 1, 1, 1, 1, 1 };
+        private static int[] key1 = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+        private static int[] key2 = new int[] { 1, 0, 1, 0, 1, 0, 1, 0, 1 };
+        private static int[] key3 = new int[] { 0, 1, 1, 0, 0, 1, 0, 1, 1 };
+        private static int[] key4 = new int[] { 1, 1, 0, 1, 0, 0, 1, 0, 0 };
+
+
+
+        private void Configini()
+        {
+             if (File.Exists(ConfigPath))
+            {
+                try
+                {
+                    TempIndex = int.Parse(IniFiles.IniReadvalue("Devide", "port"));
+
+                    key0 = Array.ConvertAll(IniFiles.IniReadvalue("Devide", "key0").Split(','), int.Parse);
+                    key1 = Array.ConvertAll(IniFiles.IniReadvalue("Devide", "key1").Split(','), int.Parse);
+                    key2 = Array.ConvertAll(IniFiles.IniReadvalue("Devide", "key2").Split(','), int.Parse);
+                    key3 = Array.ConvertAll(IniFiles.IniReadvalue("Devide", "key3").Split(','), int.Parse);
+                    key4 = Array.ConvertAll(IniFiles.IniReadvalue("Devide", "key4").Split(','), int.Parse);
+                    AllOpenkeys = Util.NumsToDic(key0);
+                    AllClosekeys = Util.NumsToDic(key1);
+                    Gongankeys = Util.NumsToDic(key2);
+                    Hujikeys = Util.NumsToDic(key3);
+                    Waihuikeys = Util.NumsToDic(key4);
+                }
+                catch
+                {
+                    MessageBox.Show(" 初始化配置文件失败");
+                    Environment.Exit(0);
+                }
+
+            }
+            else
+            {
+
+                IniFiles.IniWritevalue("Devide", "port", "0");
+
+                IniFiles.IniWritevalue("Devide", "key0", " 1,1,1,1,1,1,1,1,1");
+                IniFiles.IniWritevalue("Devide", "key1", " 0,0,0,0,0,0,0,0,0");
+                IniFiles.IniWritevalue("Devide", "key2", " 1,0,1,0,1,0,1,0,1");
+                IniFiles.IniWritevalue("Devide", "key3", " 0,1,1,0,0,1,0,1,1");
+                IniFiles.IniWritevalue("Devide", "key4", " 1,1,0,1,0,0,1,0,0");
+
+
+            }
+        }
+
+
+
         private void Window_Initialized(object sender, EventArgs e)               
-        {     
+        {
+            Configini();
             timer = new Timer(_ => Dispatcher.BeginInvoke(new Action(() => TimeRun())), null, 0, 1000);//本来是60，不过没必要刷新这么快，就1s1次就好。
             ShowBorders = new List<Border> { Show1, Show2, Show3, Show4, Show5, Show6, Show7, Show8, Show9 };
             ClickButton = new List<Button> { Button1, Button2, Button3, Button4, Button5, Button6, Button7, Button8, Button9 };
@@ -255,11 +312,11 @@ namespace USB
             Helper.SendMsg(int.Parse(button.Content.ToString())-1, int.Parse(button.Tag.ToString()));
         }
 
-        private readonly Dictionary<int, int> AllOpenkeys = Util.NumsToDic(new int[] { 1, 1, 1, 1, 1, 1, 1, 1, 1 });
-        private readonly Dictionary<int, int> AllClosekeys = Util.NumsToDic(new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 });
-        private readonly Dictionary<int, int> Gongankeys = Util.NumsToDic(new int[] { 1, 0, 1, 0, 1, 0, 1, 0, 1 });
-        private readonly Dictionary<int, int> Hujikeys = Util.NumsToDic(new int[] { 1, 1, 0, 0, 0, 1, 1, 0, 0 });
-        private readonly Dictionary<int, int> Waihuikeys = Util.NumsToDic(new int[] { 0, 1, 0, 1, 1, 0, 0, 1, 1 });
+        private Dictionary<int, int> AllOpenkeys = Util.NumsToDic(key0);
+        private Dictionary<int, int> AllClosekeys = Util.NumsToDic(key1);
+        private Dictionary<int, int> Gongankeys = Util.NumsToDic(key2);
+        private Dictionary<int, int> Hujikeys = Util.NumsToDic(key3);
+        private Dictionary<int, int> Waihuikeys = Util.NumsToDic(key4);
 
         private void Function_Click(object sender, RoutedEventArgs e)
         {
