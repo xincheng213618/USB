@@ -5,123 +5,51 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:USB"
         mc:Ignorable="d"
-        Title="江苏同袍USB控制器" Background="#f6f6f6" Height="300" Width="320" ResizeMode="NoResize" Initialized="Window_Initialized">
+        Title="Demo" Background="#f6f6f6" Height="300" Width="320" ResizeMode="NoResize" Initialized="Window_Initialized">
     <Grid>
+        <Grid Margin="0,0,-0.333,0">
+           
+            <ComboBox x:Name="comboBox" HorizontalAlignment="Left"  VerticalAlignment="Top" Width="120" Visibility="Visible"/>
+            <Button x:Name="button" Content="连接" HorizontalAlignment="Left" Margin="122,0,0,0" VerticalAlignment="Top" Tag="Open" Width="76" Click="Function_Click"/>
+            <Button x:Name="button1" Content="关闭" HorizontalAlignment="Left" Margin="201,0,0,0" VerticalAlignment="Top" Tag="Close"   Width="75" Click="Function_Click"/>
+            <Button  Content="电机运动" HorizontalAlignment="Left" Margin="122,32,0,0" VerticalAlignment="Top" Tag="Run"   Width="75" Click="Function_Click"/>
+            <TextBox x:Name="SetMsg" Text="/1D1000,10000R" Margin="0,57,10,170" RenderTransformOrigin="-0.527,2.528"/>
+            <StackPanel VerticalAlignment="Bottom">
+                <Label  Content="{Binding X}"  ContentStringFormat ="X:{0:F0}" />
+                <Label  Content="{Binding Y}"  ContentStringFormat ="Y:{0:F0}" />
+                <Label  Content="{Binding Z}"  ContentStringFormat ="Z:{0:F0}" />
+            </StackPanel>
+            <Grid Height="150" Width="150" VerticalAlignment="Bottom">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
 
-        <Grid>
-            <Border x:Name="Functionborder"  HorizontalAlignment="Left" Background="White" Width="80" CornerRadius="5"  Margin="5">
-                <Grid  >
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
-                    <Border x:Name="AllOpenBorder" Grid.Row="0" Background="AliceBlue" Margin="3" CornerRadius="3,3,3,3">
-                        <Button Template="{StaticResource imageButtonTemplate}" Content="全部开启" FontSize="12" FontWeight="Bold" Click="Function_Click" Tag="AllOpen"/>
-                    </Border>
-                    <Border x:Name="AllCloseBorder" Grid.Row="1" Background="AliceBlue" Margin="3" CornerRadius="3,3,3,3">
-                        <Button  Template="{StaticResource imageButtonTemplate}" Content="全部关闭" FontSize="12" FontWeight="Bold" Click="Function_Click" Tag="AllClose"/>
-                    </Border>
-                    <Border x:Name="GonganBorder" Grid.Row="2" Background="AliceBlue" Margin="3" CornerRadius="3,3,3,3">
-                        <Button Template="{StaticResource imageButtonTemplate}" Content="人口业务" FontSize="12" FontWeight="Bold" Click="Function_Click" Tag="Gongan"/>
-                    </Border>
-                    <Border x:Name="HujiBorder" Grid.Row="3" Background="AliceBlue" Margin="3" CornerRadius="3,3,3,3">
-                        <Button Template="{StaticResource imageButtonTemplate}" Content="出入境业务" FontSize="12" FontWeight="Bold" Click="Function_Click" Tag="Huji"/>
-                    </Border>
-                    <Border x:Name="WaihuiBorder" Grid.Row="4" Background="AliceBlue" Margin="3" CornerRadius="3,3,3,3">
-                        <Button Template="{StaticResource imageButtonTemplate}" Content="车架管业务" FontSize="12" FontWeight="Bold" Click="Function_Click" Tag="Waihui"/>
-                    </Border>
-
-
-
-                </Grid>
-            </Border>
-
-            <ComboBox x:Name="comboBox" HorizontalAlignment="Left"  VerticalAlignment="Top" Width="120" Visibility="Hidden"/>
-            <!--<Button x:Name="button" Content="连接" HorizontalAlignment="Left" Margin="122,0,0,0" VerticalAlignment="Top" Width="76" Click="button_Click"/>-->
-            <!--<Button x:Name="button1" Content="关闭" HorizontalAlignment="Left" Margin="201,0,0,0" VerticalAlignment="Top" Width="75" Click="button1_Click"/>-->
-
-            <Border x:Name="OpenShow"  Background="Gray" CornerRadius="0" Height="20" Width="20"  VerticalAlignment="Top" HorizontalAlignment="Right"/>
-
-
-            <Border Height="150" Width="150"  Background="White" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="30,30" CornerRadius="15">
-                <Grid >
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
-                    <Border x:Name="Show1" Grid.Row="0" Grid.Column="0" Background="Gray" CornerRadius="30" Height="30" Width="30"/>
-                    <Border x:Name="Show2" Grid.Row="0" Grid.Column="1" Background="Gray" CornerRadius="30" Height="30" Width="30"/>
-                    <Border x:Name="Show3" Grid.Row="0" Grid.Column="2" Background="Gray" CornerRadius="30" Height="30" Width="30"/>
-                    <Border x:Name="Show4" Grid.Row="1" Grid.Column="0" Background="Gray" CornerRadius="30" Height="30" Width="30"/>
-                    <Border x:Name="Show5" Grid.Row="1" Grid.Column="1" Background="Gray" CornerRadius="30" Height="30" Width="30"/>
-                    <Border x:Name="Show6" Grid.Row="1" Grid.Column="2" Background="Gray" CornerRadius="30" Height="30" Width="30"/>
-                    <Border x:Name="Show7" Grid.Row="2" Grid.Column="0" Background="Gray" CornerRadius="30" Height="30" Width="30"/>
-                    <Border x:Name="Show8" Grid.Row="2" Grid.Column="1" Background="Gray" CornerRadius="30" Height="30" Width="30"/>
-                    <Border x:Name="Show9" Grid.Row="3" Grid.Column="2" Background="Gray" CornerRadius="30" Height="30" Width="30"/>
-                    <Button x:Name="Button1" Template="{StaticResource imageButtonTemplate}" Grid.Row="0" Grid.Column="0" Click="Send_Click" Content="1" Tag="1"/>
-                    <Button x:Name="Button2" Template="{StaticResource imageButtonTemplate}" Grid.Row="0" Grid.Column="1" Click="Send_Click" Content="2" Tag="1"/>
-                    <Button x:Name="Button3" Template="{StaticResource imageButtonTemplate}" Grid.Row="0" Grid.Column="2" Click="Send_Click" Content="3" Tag="1"/>
-                    <Button x:Name="Button4" Template="{StaticResource imageButtonTemplate}" Grid.Row="1" Grid.Column="0" Click="Send_Click" Content="4" Tag="1"/>
-                    <Button x:Name="Button5" Template="{StaticResource imageButtonTemplate}" Grid.Row="1" Grid.Column="1" Click="Send_Click" Content="5" Tag="1"/>
-                    <Button x:Name="Button6" Template="{StaticResource imageButtonTemplate}" Grid.Row="1" Grid.Column="2" Click="Send_Click" Content="6" Tag="1"/>
-                    <Button x:Name="Button7" Template="{StaticResource imageButtonTemplate}" Grid.Row="2" Grid.Column="0" Click="Send_Click" Content="7" Tag="1"/>
-                    <Button x:Name="Button8" Template="{StaticResource imageButtonTemplate}" Grid.Row="2" Grid.Column="1" Click="Send_Click" Content="8" Tag="1"/>
-                    <Button x:Name="Button9" Template="{StaticResource imageButtonTemplate}" Grid.Row="2" Grid.Column="2" Click="Send_Click" Content="9" Tag="1"/>
-                </Grid>
-            </Border>
-            <Label Content="技术支持：南京保通电讯有限公司" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,5,3"/>
-
-            <Grid Height="70" Width="125" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="35,5" >
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                <Border  Grid.Row="0" Background="Gray" CornerRadius="20" Height="20" Width="20" HorizontalAlignment="Left"/>
-                <Label Grid.Row="0"  HorizontalAlignment="Center" VerticalAlignment="Center"  Content="：关闭"  FontSize="20"/>
-                <Border  Grid.Row="1" Background="Green" CornerRadius="20" Height="20" Width="20" HorizontalAlignment="Left"/>
-                <Label Grid.Row="1"  HorizontalAlignment="Center" VerticalAlignment="Center"  Content="：打开"  FontSize="20"/>
-
-
-                <!--<Label HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10" >
-                    <TextBlock Text="灰色代表该USB未启用&#x000d;&#x000a;绿色代表改USB正常打开&#x000d;&#x000a;可通过左侧预设命令进行控制&#x000d;&#x000a;也可以点击对应的按钮" AllowDrop="True" TextWrapping="Wrap"  />
-                </Label>-->
+                <Button Grid.Row="1" Grid.Column="2" Content="Y+" Click="Move_Click" Tag="Y+"/>
+                <Button Grid.Row="2" Grid.Column="1" Content="X+" Click="Move_Click" Tag="X+"/>
+                <Button Grid.Row="2" Grid.Column="3" Content="X-" Click="Move_Click" Tag="X-"/>
+                <Button Grid.Row="3" Grid.Column="2" Content="Y-" Click="Move_Click" Tag="Y-"/>
+                <Button Grid.Row="0" Grid.Column="2" Content="Y++" Click="Move_Click" Tag="Y++"/>
+                <Button Grid.Row="2" Grid.Column="0" Content="X++" Click="Move_Click" Tag="X++"/>
+                <Button Grid.Row="2" Grid.Column="5" Content="X--" Click="Move_Click" Tag="X--"/>
+                <Button Grid.Row="5" Grid.Column="2" Content="Y--" Click="Move_Click" Tag="Y--"/>
             </Grid>
 
+
+
+
         </Grid>
-
-
-
-        <Grid x:Name="ErrorGrid" Background="AliceBlue" Opacity="0.9" >
-            <Grid.Style>
-                <Style TargetType="Grid">
-                    <Style.Triggers>
-                        <Trigger Property="Opacity" Value="0" >
-                            <Setter Property="Visibility" Value="Hidden"/>
-                        </Trigger>
-                    </Style.Triggers>
-                    <Setter Property="Visibility" Value="Visible"/>
-                </Style>
-            </Grid.Style>
-            <Image Source="images/usb.png" Opacity="0.1 "/>
-            <Grid Margin="30,50">
-                <Label x:Name="ErrorLabel" Content="正在尝试连接"  HorizontalAlignment="Center" Foreground="Red" VerticalAlignment="Center" FontWeight="Bold" FontSize="30" />
-                <Label Content="请检测usb是否正常连接，点击刷新立即重试" HorizontalAlignment="Center" VerticalAlignment="Bottom" FontWeight="Bold" Height="43"  />
-            </Grid>
-            <Label x:Name="ErrorCountLabel" Content="10s 自动后尝试重新连接"  HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="10,20" Foreground="Red"  FontWeight="Bold" FontSize="10"  />
-            <Button Template="{StaticResource imageButtonTemplate}"  VerticalAlignment="Top" HorizontalAlignment="Center" Click="Refresh_Click" Margin="20">
-                <Image x:Name="RefreshImage" Source="images/refresh.png"  Height="50" Width="50" Stretch="Uniform" RenderTransformOrigin="0.5,0.5" />
-            </Button>
-        </Grid>
-
 
 
     </Grid>

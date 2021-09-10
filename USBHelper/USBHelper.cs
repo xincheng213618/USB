@@ -8,20 +8,12 @@ namespace USBDLL
     public static class Helper
     {
         public static SerialPort serialPort = new SerialPort { };
-        public static Dictionary<int, int> CurrentKeyValuePairs = Util.NumsToDic(new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 });
 
-        public static Dictionary<byte, int> CodeKeyValuePairs = new Dictionary<byte, int>
-        {
-            { 0x31,0},
-            { 0x32,1},
-            { 0x33,2},
-            { 0x34,3},
-            { 0x35,4},
-            { 0x36,5},
-            { 0x37,6},
-            { 0x38,7},
-            { 0x39,8},
-        };
+
+        public static byte[] name  = new byte[] { 0x2F, 0x31, 0x61, 0x4D, 0x31, 0x6A, 0x31, 0x36, 0x6D, 0x33, 0x30, 0x68, 0x31, 0x35, 0x4C, 0x31, 0x30, 0x30, 0x56, 0x31, 0x36, 0x30, 0x30, 0x30, 0x61, 0x4D, 0x32, 0x6A, 0x31, 0x36, 0x6D, 0x33, 0x30, 0x68, 0x31, 0x35, 0x4C, 0x31, 0x30, 0x30, 0x56, 0x31, 0x36, 0x30, 0x30, 0x30, 0x61, 0x4D, 0x33, 0x6A, 0x31, 0x36, 0x6D, 0x33, 0x30, 0x68, 0x31, 0x35, 0x4C, 0x31, 0x30, 0x30, 0x56, 0x31, 0x36, 0x30, 0x30, 0x30, 0x61, 0x4D, 0x34, 0x6A, 0x31, 0x36, 0x6D, 0x33, 0x30, 0x68, 0x31, 0x35, 0x4C, 0x31, 0x30, 0x30, 0x56, 0x31, 0x36, 0x30, 0x30, 0x30, 0x52, 0x0D, 0x0A };
+
+        public static string SetMsg = "/1aM1j16m30h15L100V16000aM2j16m30h15L100V16000aM3j16m30h15L100V16000aM4j16m30h15L100V16000R\r";
+
 
         public static int OpenPort(string PortName)
         {
@@ -31,7 +23,8 @@ namespace USBDLL
                 {
                     serialPort = new SerialPort { PortName = PortName, BaudRate = 9600 };
                     serialPort.Open();
-                    serialPort.Write(new byte[7] { 0x61, 0x74, 0x73, 0x31, 0x3D, 0x3F, 0x0D }, 0, 7);
+                    byte[] buffer = System.Text.Encoding.UTF8.GetBytes(SetMsg);
+                    serialPort.Write(buffer, 0, buffer.Length);
 
                     for (int i = 0; i < 16; i++)
                     {
@@ -41,13 +34,15 @@ namespace USBDLL
                         {
                             byte[] buff = new byte[bytesread];
                             serialPort.Read(buff, 0, bytesread);
-
-                            if (buff.Length == 5)
-                                if (buff[0] == 115)
+                            if (buff.Length == 8)
+                                if (buff[3] == 64)
+                                    serialPort.DataReceived += new SerialDataReceivedEventHandler(DataReceived);
                                     return 0;
+                            serialPort.Close();
                             return -1;
                         }
                     }
+                    serialPort.Close();
                     return -1;
                 }
                 else
@@ -61,6 +56,16 @@ namespace USBDLL
             }
         }
 
+        private static void DataReceived(object sender, SerialDataReceivedEventArgs e)
+        {
+            SerialPort serialPort = sender as SerialPort;
+            Thread.Sleep(50);
+            int bytesread = serialPort.BytesToRead;
+            byte[] buff = new byte[bytesread];
+            serialPort.Read(buff, 0, bytesread);
+            //这里必须要用异步,返回原本线程
+        }
+
         public static void Close()
         {
             if (serialPort.IsOpen)
@@ -70,44 +75,18 @@ namespace USBDLL
            }
         }
 
-        private static int[] CooCode = new int[9] { 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39 };
-        private static int[] FunctionCode = new int[3] { 0x30, 0x31, 0x3F };
 
-        public static void SendMsg(int Num, int Function)
+        public static void SendMsg(byte []  msg)
         {
             if (serialPort.IsOpen)
-                serialPort.Write(new byte[7] { 0x61, 0x74, 0x73, (byte)CooCode[Num], 0x3D, (byte)FunctionCode[Function], 0x0D }, 0, 7);
+                serialPort.Write(msg, 0, msg.Length);
         }
-
-        public static async void SendMsg(Dictionary<int, int> keyValuePairs)
+        public static void SendMsg(string Msg)
         {
-            Dictionary<int, int> TempKeyValuePairs = new Dictionary<int, int> { };
-
-            foreach (var item in CurrentKeyValuePairs)
-                TempKeyValuePairs.Add(item.Key, item.Value);
-
-            foreach (var item in keyValuePairs)
-            {
-                if (TempKeyValuePairs[item.Key] != item.Value|| item.Value==2)
-                {
-                    await Task.Delay(180);
-                    SendMsg(item.Key, item.Value);
-                }
-            }
+            Msg.Replace("\n", "").Replace(" ", "").Replace("\t", "").Replace("\r", "");
+            Msg += "\r";
+            SendMsg(System.Text.Encoding.UTF8.GetBytes(Msg));
         }
 
-    }
-
-    public static class Util
-    {
-        public static Dictionary<int, int> NumsToDic(int[] Nums)
-        {
-            Dictionary<int, int> keyValuePairs = new Dictionary<int, int> { };
-            for (int i = 0; i < Nums.Length; i++)
-            {
-                keyValuePairs.Add(i, Nums[i]);
-            }
-            return keyValuePairs;
-        }
     }
 }
