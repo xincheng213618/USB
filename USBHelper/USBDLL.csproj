@@ -37,9 +37,11 @@
     <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="LenControl.cs" />
     <Compile Include="MotorControl.cs" />
     <Compile Include="USBHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

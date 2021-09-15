@@ -25,32 +25,47 @@ namespace USB
         }
         //倒计时检测
         private DispatcherTimer pageTimer = null;
+        private Timer timer;
+
 
         MotorControl MotorControl = new MotorControl();
+
         private void Window_Initialized(object sender, EventArgs e)               
         {
-            MotorControl.Initialized();
+
+            int Code = MotorControl.Initialized();
+            MotorControl.AutoSetMove();
+            OpenShow.Background = Code != 0 ? Brushes.Red : Brushes.Green;
+            timer = new Timer(_ => Dispatcher.BeginInvoke(new Action(() => TimeRun())), null, 0, 1000);//本来是60，不过没必要刷新这么快，就1s1次就好。
+
             this.DataContext = MotorControl;
 
-            GetComBox();
-            //OpenFast();
+            //pageTimer = new DispatcherTimer() { IsEnabled = false, Interval = TimeSpan.FromSeconds(1)};
+            //pageTimer.Tick += new EventHandler((sender1, e1) =>
+            //{
 
-            pageTimer = new DispatcherTimer() { IsEnabled = false, Interval = TimeSpan.FromSeconds(1)};
-            pageTimer.Tick += new EventHandler((sender1, e1) =>
-            {
-
-                if (--Countdown > 0)
-                {
-                }
-                else
-                {
-                    pageTimer.IsEnabled = false;
-                    Countdown = 10;
-                    GetComBox();
-                    Open(comboBox.Text);
-                }
-            });
+            //    if (--Countdown > 0)
+            //    {
+            //    }
+            //    else
+            //    {
+            //        pageTimer.IsEnabled = false;
+            //        Countdown = 10;
+            //        GetComBox();
+            //    }
+            //});
         }
+
+        private void TimeRun()
+        {
+            OpenShow.Background = MotorControl.IsOpen ? Brushes.Red : Brushes.Green;
+            if (!MotorControl.IsOpen)
+            {
+                int Code = MotorControl.Initialized();
+                OpenShow.Background = Code == 0 ? Brushes.Red : Brushes.Green;
+            }
+        }
+
 
         int Countdown = 10;
         public int TempIndex = 0;
@@ -60,37 +75,14 @@ namespace USB
         {
             if (pageTimer.IsEnabled)
                 pageTimer.IsEnabled = false;
-
-            GetComBox();
-            Open(comboBox.Text);
         }
 
-        private void GetComBox()
-        {
-            comboBox.Items.Clear();
-            string[] PortNames = SerialPort.GetPortNames();
-            //这种写法不允许有多个串口；
-            for (int i = 0; i < PortNames.Count(); i++)
-                comboBox.Items.Add(PortNames[i]);   //将数组内容加载到comboBox控件中
-            comboBox.SelectedIndex = TempIndex;
-        }
 
 
         public async void OpenFast()
         {
             await Task.Delay(1);
             int Code = -1 ;
-
-            for (int i = 0; i < comboBox.Items.Count; i++)
-            {
-                comboBox.SelectedIndex = i;
-                Code = Helper.OpenPort(comboBox.Text);
-                if (Code == 0)
-                {
-                    break;
-                }
-
-            }
 
             if (Code == 0)
             {
@@ -126,10 +118,6 @@ namespace USB
         }
 
        
-        public void ErrorShow(double a,double b,double time)
-        {
-            DoubleAnimation daV = new DoubleAnimation(a, b, new Duration(TimeSpan.FromSeconds(time)));
-        }
 
         private void DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
@@ -152,10 +140,6 @@ namespace USB
 
             }
         }
-        public bool Equals(Dictionary<int,int> dict1, Dictionary<int, int> dict2)
-        {
-            return dict1.Keys.Count == dict2.Keys.Count &&dict1.Keys.All(k => dict2.ContainsKey(k) && object.Equals(dict2[k], dict1[k]));
-        }
 
 
         private void ServiceClose()
@@ -165,32 +149,6 @@ namespace USB
         }
 
 
-        private void Send_Click(object sender, RoutedEventArgs e)
-        {
-            Button button = sender as Button;
-            Byte[] vs = new byte[] { 0x2F, 0x31, 0x44, 0x2C, 0x31, 0x30, 0x30, 0x30, 0x30, 0x52, 0x0D, 0x0A };
-            Helper.SendMsg(vs);
-        }
-
-
-        private void Function_Click(object sender, RoutedEventArgs e)
-        {
-            Button button = sender as Button;  
-            switch (button.Tag)
-            {
-                case "Open":
-                    Open(comboBox.Text);
-                    break;
-                case "Close":
-                    ServiceClose();
-                    break;
-                case "Run":
-                    Helper.SendMsg(SetMsg.Text);
-                    break;
-                default:
-                    break;
-            }
-        }
 
         private void Move_Click(object sender, RoutedEventArgs e)
         {
@@ -221,10 +179,45 @@ namespace USB
                 case "Y--":
                     MotorControl.MoveY(-1000);
                     break;
-
+                case "Set":
+                    MotorControl.SetMove();
+                    break;
+                case "ReSet":
+                    MotorControl.ReSetMove();
+                    break;
+                case "Z+":
+                    MotorControl.MoveZ(-100);
+                    break;
+                case "Z-":
+                    MotorControl.MoveZ(100);
+                    break;
                 default:
                     break;
             }
+        }
+
+        private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+
+        }
+
+        private void Len_Ini(object sender, RoutedEventArgs e)
+        {
+            string[] PortNames = SerialPort.GetPortNames();
+            //这种写法不允许有多个串口；
+            for (int i = 0; i < PortNames.Count(); i++)
+            {
+                int x = LenControl.OpenPort(PortNames[i]);
+                MessageBox.Show(x.ToString());
+                if (x == 0) return;
+            }
+
+        }
+
+        private void Len_Read(object sender, RoutedEventArgs e)
+        {
+            int x = LenControl.Read();
+            MessageBox.Show(x.ToString());
         }
     }
 }

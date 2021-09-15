@@ -34,12 +34,11 @@ namespace USBDLL
                         {
                             byte[] buff = new byte[bytesread];
                             serialPort.Read(buff, 0, bytesread);
-                            if (buff.Length == 8)
-                                if (buff[3] == 64)
-                                    serialPort.DataReceived += new SerialDataReceivedEventHandler(DataReceived);
-                                    return 0;
-                            serialPort.Close();
-                            return -1;
+                            if (buff.Length == 8&& buff[3] == 64)
+                            {
+                                serialPort.DataReceived += new SerialDataReceivedEventHandler(DataReceived);
+                                return 0;
+                            }
                         }
                     }
                     serialPort.Close();
@@ -55,6 +54,12 @@ namespace USBDLL
                 return -2;
             }
         }
+        public static Dictionary<int, string> OpenCode = new Dictionary<int, string>()
+        {
+            { 0,"正常" },
+            { -1,"端口异常" },
+            { -2,"端口占用/不存在端口" },
+        };
 
         private static void DataReceived(object sender, SerialDataReceivedEventArgs e)
         {

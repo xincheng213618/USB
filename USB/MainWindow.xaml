@@ -7,19 +7,27 @@
         mc:Ignorable="d"
         Title="Demo" Background="#f6f6f6" Height="300" Width="320" ResizeMode="NoResize" Initialized="Window_Initialized">
     <Grid>
-        <Grid Margin="0,0,-0.333,0">
-           
-            <ComboBox x:Name="comboBox" HorizontalAlignment="Left"  VerticalAlignment="Top" Width="120" Visibility="Visible"/>
-            <Button x:Name="button" Content="连接" HorizontalAlignment="Left" Margin="122,0,0,0" VerticalAlignment="Top" Tag="Open" Width="76" Click="Function_Click"/>
-            <Button x:Name="button1" Content="关闭" HorizontalAlignment="Left" Margin="201,0,0,0" VerticalAlignment="Top" Tag="Close"   Width="75" Click="Function_Click"/>
-            <Button  Content="电机运动" HorizontalAlignment="Left" Margin="122,32,0,0" VerticalAlignment="Top" Tag="Run"   Width="75" Click="Function_Click"/>
-            <TextBox x:Name="SetMsg" Text="/1D1000,10000R" Margin="0,57,10,170" RenderTransformOrigin="-0.527,2.528"/>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="278*"/>
+            <ColumnDefinition Width="37*"/>
+        </Grid.ColumnDefinitions>
+        <Grid Margin="0,0,-0.334,0" Grid.ColumnSpan="2">
+            <Border x:Name="OpenShow"  Background="Gray" CornerRadius="0" Height="20" Width="20"  VerticalAlignment="Top" HorizontalAlignment="Right"/>
             <StackPanel VerticalAlignment="Bottom">
-                <Label  Content="{Binding X}"  ContentStringFormat ="X:{0:F0}" />
+                <DockPanel>
+                    <Label  Content="{Binding X}"  ContentStringFormat ="X:{0:F0}" />
+                </DockPanel>
                 <Label  Content="{Binding Y}"  ContentStringFormat ="Y:{0:F0}" />
                 <Label  Content="{Binding Z}"  ContentStringFormat ="Z:{0:F0}" />
             </StackPanel>
-            <Grid Height="150" Width="150" VerticalAlignment="Bottom">
+            <DockPanel HorizontalAlignment="Left" VerticalAlignment="Top">
+                <Button Height="30" Width="30"   Content="连接" Click="Len_Ini"/>
+                <Button Height="30" Width="30"   Content="读取" Click="Len_Read"/>
+
+
+            </DockPanel>
+
+            <Grid Height="150" Width="150" VerticalAlignment="Top">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
@@ -36,6 +44,8 @@
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
+                <Button Grid.Row="0" Grid.Column="0" Content="Z+" Click="Move_Click" Tag="Z+"/>
+                <Button Grid.Row="1" Grid.Column="0" Content="Z-" Click="Move_Click" Tag="Z-"/>
                 <Button Grid.Row="1" Grid.Column="2" Content="Y+" Click="Move_Click" Tag="Y+"/>
                 <Button Grid.Row="2" Grid.Column="1" Content="X+" Click="Move_Click" Tag="X+"/>
                 <Button Grid.Row="2" Grid.Column="3" Content="X-" Click="Move_Click" Tag="X-"/>
@@ -44,11 +54,9 @@
                 <Button Grid.Row="2" Grid.Column="0" Content="X++" Click="Move_Click" Tag="X++"/>
                 <Button Grid.Row="2" Grid.Column="5" Content="X--" Click="Move_Click" Tag="X--"/>
                 <Button Grid.Row="5" Grid.Column="2" Content="Y--" Click="Move_Click" Tag="Y--"/>
+                <Button Grid.Row="5" Grid.Column="5" Content="复位" Click="Move_Click" Tag="ReSet"/>
+                <Button Grid.Row="5" Grid.Column="0" Content="校0" Click="Move_Click" Tag="Set"/>
             </Grid>
-
-
-
-
         </Grid>
 
 
