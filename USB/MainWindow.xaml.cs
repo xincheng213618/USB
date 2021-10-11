@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Ports;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -39,83 +40,21 @@ namespace USB
             timer = new Timer(_ => Dispatcher.BeginInvoke(new Action(() => TimeRun())), null, 0, 1000);//本来是60，不过没必要刷新这么快，就1s1次就好。
 
             this.DataContext = MotorControl;
-
-            //pageTimer = new DispatcherTimer() { IsEnabled = false, Interval = TimeSpan.FromSeconds(1)};
-            //pageTimer.Tick += new EventHandler((sender1, e1) =>
-            //{
-
-            //    if (--Countdown > 0)
-            //    {
-            //    }
-            //    else
-            //    {
-            //        pageTimer.IsEnabled = false;
-            //        Countdown = 10;
-            //        GetComBox();
-            //    }
-            //});
         }
 
         private void TimeRun()
         {
-            OpenShow.Background = MotorControl.IsOpen ? Brushes.Red : Brushes.Green;
-            if (!MotorControl.IsOpen)
+            if (!MotorControl.Port.serialPort.IsOpen)
             {
                 int Code = MotorControl.Initialized();
                 OpenShow.Background = Code == 0 ? Brushes.Red : Brushes.Green;
             }
-        }
-
-
-        int Countdown = 10;
-        public int TempIndex = 0;
-
-
-        private void Refresh_Click(object sender, RoutedEventArgs e)
-        {
-            if (pageTimer.IsEnabled)
-                pageTimer.IsEnabled = false;
-        }
-
-
-
-        public async void OpenFast()
-        {
-            await Task.Delay(1);
-            int Code = -1 ;
-
-            if (Code == 0)
-            {
-                pageTimer.IsEnabled = false;
-
-                Helper.serialPort.DataReceived += new SerialDataReceivedEventHandler(DataReceived);
-            }
             else
             {
-                Countdown = 10;
-                pageTimer.IsEnabled = true;
+                OpenShow.Background = MotorControl.Port.serialPort.IsOpen ? Brushes.Red : Brushes.Green;
             }
         }
 
-
-
-        public async void Open(string PortName)
-        {
-            await Task.Delay(1);
-            int Code = Helper.OpenPort(PortName);
-            MessageBox.Show(Code.ToString());
-
-            if (Code == 0)
-            {
-                pageTimer.IsEnabled = false;
-                Helper.serialPort.DataReceived += new SerialDataReceivedEventHandler(DataReceived);
-            }
-            else
-            {
-                Countdown = 10;
-                pageTimer.IsEnabled = true;
-            }
-        }
 
        
 
@@ -142,30 +81,40 @@ namespace USB
         }
 
 
-        private void ServiceClose()
-        {
-            Helper.Close();
-            Helper.serialPort.DataReceived -= new SerialDataReceivedEventHandler(DataReceived);
-        }
-
 
 
         private void Move_Click(object sender, RoutedEventArgs e)
         {
-            Button button = sender as Button;
-            switch (button.Tag)
+            if (!MotorControl.Port.serialPort.IsOpen)
+            {
+                MessageBox.Show("请检查位移台的是否正确连接");
+                return;
+            }
+            if (MotorControl.IsRun.IsEnabled)
+            {
+                //MessageBox.Show("正在运动中");
+                return;
+            }
+            Move(((Button)sender).Tag.ToString());
+
+
+        }
+        private  async void Move( string control)
+        {
+            switch (control)
             {
                 case "X+":
-                    MotorControl.MoveX(100);
+                    MotorControl.MoveX(int.Parse(Num.Text));
+
                     break;
                 case "X-":
-                    MotorControl.MoveX(-100);
+                    MotorControl.MoveX(-int.Parse(Num.Text));
                     break;
                 case "Y+":
-                    MotorControl.MoveY(100);
+                    MotorControl.MoveY(int.Parse(Num.Text));
                     break;
                 case "Y-":
-                    MotorControl.MoveY(-100);
+                    MotorControl.MoveY(-int.Parse(Num.Text));
                     break;
                 case "X++":
                     MotorControl.MoveX(1000);
@@ -186,20 +135,49 @@ namespace USB
                     MotorControl.ReSetMove();
                     break;
                 case "Z+":
-                    MotorControl.MoveZ(-100);
+                    MotorControl.MoveZ(int.Parse(Num.Text));
                     break;
                 case "Z-":
-                    MotorControl.MoveZ(100);
+                    MotorControl.MoveZ(-int.Parse(Num.Text));
+                    break;
+                case "Change":
+                    int Z = MotorControl.Z;
+                    int ZHlight = int.Parse(Num.Text);
+
+
+                    ZHlight = int.Parse(Num.Text);
+                    //MotorControl.MoveZ(ZHlight);
+
+                    //await Task.Delay(ZHlight / 15 + 1000);
+                    //MotorControl.MoveZ(-ZHlight);
+
+                    MotorControl.MoveY(ZHlight);
+                    await Task.Delay(ZHlight / 15 + 700);
+                    MotorControl.MoveY(ZHlight);
+
+                    break;
+                case "ChangeX":
+                    ZHlight = int.Parse(Num.Text);
+                    //MotorControl.MoveZ(ZHlight);
+                    MotorControl.MoveY(ZHlight);
+                    await Task.Delay(ZHlight / 15 + 700);
+                    MotorControl.MoveY(-ZHlight);
+
                     break;
                 default:
                     break;
             }
         }
 
+
+
+
         private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
 
         }
+
+       
 
         private void Len_Ini(object sender, RoutedEventArgs e)
         {
@@ -219,5 +197,13 @@ namespace USB
             int x = LenControl.Read();
             MessageBox.Show(x.ToString());
         }
+
+
+        private void PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
+        {
+            Regex regex = new Regex("[^0-9]+");
+            e.Handled = regex.IsMatch(e.Text);
+        }
     }
+
 }

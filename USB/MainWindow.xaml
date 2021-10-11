@@ -15,19 +15,22 @@
             <Border x:Name="OpenShow"  Background="Gray" CornerRadius="0" Height="20" Width="20"  VerticalAlignment="Top" HorizontalAlignment="Right"/>
             <StackPanel VerticalAlignment="Bottom">
                 <DockPanel>
-                    <Label  Content="{Binding X}"  ContentStringFormat ="X:{0:F0}" />
+                    <Label  Content="{Binding X}"  ContentStringFormat ="当前X的坐标:{0:F0}" />
                 </DockPanel>
-                <Label  Content="{Binding Y}"  ContentStringFormat ="Y:{0:F0}" />
-                <Label  Content="{Binding Z}"  ContentStringFormat ="Z:{0:F0}" />
+                <Label  Content="{Binding Y}"  ContentStringFormat ="当前Y的坐标:{0:F0}" />
+                <Label  Content="{Binding Z}"  ContentStringFormat ="当前Z的坐标:{0:F0}" />
+                <Label  Content="{Binding RunWait}"  ContentStringFormat ="等待:{0:F0}" />
+
+
             </StackPanel>
             <DockPanel HorizontalAlignment="Left" VerticalAlignment="Top">
                 <Button Height="30" Width="30"   Content="连接" Click="Len_Ini"/>
                 <Button Height="30" Width="30"   Content="读取" Click="Len_Read"/>
-
+                <Button Height="30" Width="30"   Content="更换物镜" Click="Move_Click" Tag="Change"/>
 
             </DockPanel>
 
-            <Grid Height="150" Width="150" VerticalAlignment="Top">
+            <Grid Height="150" Width="150" VerticalAlignment="Top" HorizontalAlignment="Right">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
@@ -47,16 +50,46 @@
                 <Button Grid.Row="0" Grid.Column="0" Content="Z+" Click="Move_Click" Tag="Z+"/>
                 <Button Grid.Row="1" Grid.Column="0" Content="Z-" Click="Move_Click" Tag="Z-"/>
                 <Button Grid.Row="1" Grid.Column="2" Content="Y+" Click="Move_Click" Tag="Y+"/>
-                <Button Grid.Row="2" Grid.Column="1" Content="X+" Click="Move_Click" Tag="X+"/>
-                <Button Grid.Row="2" Grid.Column="3" Content="X-" Click="Move_Click" Tag="X-"/>
+                <Button Grid.Row="2" Grid.Column="3" Content="X+" Click="Move_Click" Tag="X+"/>
+                <Button Grid.Row="2" Grid.Column="1" Content="X-" Click="Move_Click" Tag="X-"/>
                 <Button Grid.Row="3" Grid.Column="2" Content="Y-" Click="Move_Click" Tag="Y-"/>
                 <Button Grid.Row="0" Grid.Column="2" Content="Y++" Click="Move_Click" Tag="Y++"/>
-                <Button Grid.Row="2" Grid.Column="0" Content="X++" Click="Move_Click" Tag="X++"/>
-                <Button Grid.Row="2" Grid.Column="5" Content="X--" Click="Move_Click" Tag="X--"/>
+                <Button Grid.Row="2" Grid.Column="5" Content="X++" Click="Move_Click" Tag="X++"/>
+                <Button Grid.Row="2" Grid.Column="0" Content="X--" Click="Move_Click" Tag="X--"/>
                 <Button Grid.Row="5" Grid.Column="2" Content="Y--" Click="Move_Click" Tag="Y--"/>
                 <Button Grid.Row="5" Grid.Column="5" Content="复位" Click="Move_Click" Tag="ReSet"/>
                 <Button Grid.Row="5" Grid.Column="0" Content="校0" Click="Move_Click" Tag="Set"/>
             </Grid>
+            <Grid HorizontalAlignment="Right" VerticalAlignment="Bottom" Height="100" Width="100">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions >
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="2*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <TextBox x:Name="Num" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center"  BorderThickness="0" Background="Transparent" PreviewTextInput="PreviewTextInput" Text="10000" />
+                <Button Grid.Row="0"  Grid.Column="1" Template="{StaticResource imageButtonTemplate}" Click="Move_Click" Tag="Y+"  Margin="-10,0,-10,-10">
+                    <Image Source="images/up1.png"/>
+                </Button>
+                <Button Grid.Column="0" Grid.Row="1" Template="{StaticResource imageButtonTemplate}"  Click="Move_Click" Tag="X-" Margin="0,-10,-10,-10">
+                    <Image Source="images/left1.png" />
+                </Button>
+                <Button Grid.Column="1" Grid.Row="3" Template="{StaticResource imageButtonTemplate}"  Click="Move_Click" Tag="Y-"   Margin="-10,-10,-10,0">
+                    <Image Source="images/down1.png"/>
+                </Button>
+                <Button Grid.Column="3" Grid.Row="1" Template="{StaticResource imageButtonTemplate}" Click="Move_Click"  Tag="X+"  Margin="-10,-10,0,-10">
+                    <Image Source="images/right1.png"/>
+                </Button>
+                
+                
+                
+
+            </Grid>
+
         </Grid>
 
 
