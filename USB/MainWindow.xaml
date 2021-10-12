@@ -12,21 +12,30 @@
             <ColumnDefinition Width="37*"/>
         </Grid.ColumnDefinitions>
         <Grid Margin="0,0,-0.334,0" Grid.ColumnSpan="2">
-            <Border x:Name="OpenShow"  Background="Gray" CornerRadius="0" Height="20" Width="20"  VerticalAlignment="Top" HorizontalAlignment="Right"/>
+            <Border x:Name="OpenShow"  Background="Gray" CornerRadius="0" Height="30" Width="30"  VerticalAlignment="Top" HorizontalAlignment="Right">
+                <Label Content="位"  HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Border>
+
+            <Border x:Name="OpenShow1"  Background="Gray" CornerRadius="0" Height="30" Width="30"  VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,30,0,0">
+                <Label Content="感"  HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Border>
+
             <StackPanel VerticalAlignment="Bottom">
                 <DockPanel>
                     <Label  Content="{Binding X}"  ContentStringFormat ="当前X的坐标:{0:F0}" />
                 </DockPanel>
                 <Label  Content="{Binding Y}"  ContentStringFormat ="当前Y的坐标:{0:F0}" />
                 <Label  Content="{Binding Z}"  ContentStringFormat ="当前Z的坐标:{0:F0}" />
-                <Label  Content="{Binding RunWait}"  ContentStringFormat ="等待:{0:F0}" />
+                <Label  Content="{Binding RunWait}"  ContentStringFormat ="电机运动等待:{0:F0}" />
+                <Label x:Name="LenLabel"  Content="{Binding Camera}"  ContentStringFormat ="当前的位移台:{0:F0}" />
+
 
 
             </StackPanel>
             <DockPanel HorizontalAlignment="Left" VerticalAlignment="Top">
                 <Button Height="30" Width="30"   Content="连接" Click="Len_Ini"/>
                 <Button Height="30" Width="30"   Content="读取" Click="Len_Read"/>
-                <Button Height="30" Width="30"   Content="更换物镜" Click="Move_Click" Tag="Change"/>
+                <Button Height="30" Width="64"   Content="更换物镜" Click="Move_Click" Tag="Change"/>
 
             </DockPanel>
 
@@ -71,7 +80,7 @@
                     <RowDefinition Height="2*"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                <TextBox x:Name="Num" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center"  BorderThickness="0" Background="Transparent" PreviewTextInput="PreviewTextInput" Text="10000" />
+                <TextBox x:Name="Num" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center"  BorderThickness="0" Background="Transparent" PreviewTextInput="PreviewTextInput" Text="3600" />
                 <Button Grid.Row="0"  Grid.Column="1" Template="{StaticResource imageButtonTemplate}" Click="Move_Click" Tag="Y+"  Margin="-10,0,-10,-10">
                     <Image Source="images/up1.png"/>
                 </Button>

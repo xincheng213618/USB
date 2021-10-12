@@ -24,22 +24,18 @@ namespace USB
         {
             InitializeComponent();
         }
-        //倒计时检测
-        private DispatcherTimer pageTimer = null;
+
         private Timer timer;
 
-
         MotorControl MotorControl = new MotorControl();
+        LenControl LenControl = new LenControl();
 
         private void Window_Initialized(object sender, EventArgs e)               
         {
+            timer = new Timer(_ => Dispatcher.BeginInvoke(new Action(() => TimeRun())), null, 0, 500);//本来是60，不过没必要刷新这么快，就1s1次就好。
 
-            int Code = MotorControl.Initialized();
-            MotorControl.AutoSetMove();
-            OpenShow.Background = Code != 0 ? Brushes.Red : Brushes.Green;
-            timer = new Timer(_ => Dispatcher.BeginInvoke(new Action(() => TimeRun())), null, 0, 1000);//本来是60，不过没必要刷新这么快，就1s1次就好。
-
-            this.DataContext = MotorControl;
+            DataContext = MotorControl;
+            LenLabel.DataContext = LenControl;
         }
 
         private void TimeRun()
@@ -53,34 +49,16 @@ namespace USB
             {
                 OpenShow.Background = MotorControl.Port.serialPort.IsOpen ? Brushes.Red : Brushes.Green;
             }
-        }
-
-
-       
-
-        private void DataReceived(object sender, SerialDataReceivedEventArgs e)
-        {
-            SerialPort serialPort = sender as SerialPort;
-            Thread.Sleep(50);
-            int bytesread = serialPort.BytesToRead;
-            byte[] buff = new byte[bytesread];
-            serialPort.Read(buff, 0, bytesread);
-            //这里必须要用异步,返回原本线程
-            Dispatcher.BeginInvoke(new Action(() => Show(buff)));
-        }
-
-
-        private readonly BrushConverter Use1 = new BrushConverter();
-
-        private void Show(byte[] buff)
-        {
-            if (buff.Length == 5)
+            if (!LenControl.serialPort.IsOpen)
             {
-
+                int Code = LenControl.Initialized();
+                OpenShow1.Background = Code == 0 ? Brushes.Red : Brushes.Green;
+            }
+            else
+            {
+                OpenShow1.Background = LenControl.serialPort.IsOpen ? Brushes.Red : Brushes.Green;
             }
         }
-
-
 
 
         private void Move_Click(object sender, RoutedEventArgs e)
@@ -141,19 +119,13 @@ namespace USB
                     MotorControl.MoveZ(-int.Parse(Num.Text));
                     break;
                 case "Change":
-                    int Z = MotorControl.Z;
                     int ZHlight = int.Parse(Num.Text);
-
-
-                    ZHlight = int.Parse(Num.Text);
-                    //MotorControl.MoveZ(ZHlight);
-
-                    //await Task.Delay(ZHlight / 15 + 1000);
-                    //MotorControl.MoveZ(-ZHlight);
-
                     MotorControl.MoveY(ZHlight);
                     await Task.Delay(ZHlight / 15 + 700);
-                    MotorControl.MoveY(ZHlight);
+
+                    LenControl.Read();
+
+
 
                     break;
                 case "ChangeX":
@@ -177,7 +149,6 @@ namespace USB
 
         }
 
-       
 
         private void Len_Ini(object sender, RoutedEventArgs e)
         {
@@ -186,16 +157,18 @@ namespace USB
             for (int i = 0; i < PortNames.Count(); i++)
             {
                 int x = LenControl.OpenPort(PortNames[i]);
-                MessageBox.Show(x.ToString());
-                if (x == 0) return;
+                if (x == 0)
+                {
+                    MessageBox.Show("连接成功");
+                    return;
+                }
             }
 
         }
 
         private void Len_Read(object sender, RoutedEventArgs e)
         {
-            int x = LenControl.Read();
-            MessageBox.Show(x.ToString());
+            LenControl.Read();
         }
 
 
