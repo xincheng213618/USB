@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace USBDLL
+namespace Motor
 {
     public class LenControl : INotifyPropertyChanged
     {
@@ -104,23 +104,23 @@ namespace USBDLL
             {
                 if (buff[1] == 0)
                 {
-                    Camera = 0;
+                    Len = 0;
                 }
                 else if (buff[1] == 1)
                 {
-                    Camera = 1;
+                    Len = 1;
                 }
                 else if (buff[1] == 2)
                 {
-                    Camera = 2;
+                    Len = 2;
                 }
                 else if (buff[1] == 3)
                 {
-                    Camera = 3;
+                    Len = 3;
                 }
                 else if (buff[1] == 4)
                 {
-                    Camera = 4;
+                    Len = 4;
                 }
 
             }
@@ -159,6 +159,7 @@ namespace USBDLL
         }
 
 
+
         public event PropertyChangedEventHandler PropertyChanged;
         private void NotifyPropertyChanged([CallerMemberName] string propertyName = null)
         {
@@ -166,15 +167,15 @@ namespace USBDLL
         }
 
 
-        public int camera=0;
+        public int len=0;
         /// <summary>
         /// X轴方向
         /// </summary>
-        public int Camera
+        public int Len
         {
-            get => camera; set
+            get => len; set
             {
-                camera = value;
+                len = value;
                 NotifyPropertyChanged();
             }
         }

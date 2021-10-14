@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:USB"
         mc:Ignorable="d"
-        Title="Demo" Background="#f6f6f6" Height="300" Width="320" ResizeMode="NoResize" Initialized="Window_Initialized">
+        Title="显微镜硬件控制Demo" Background="#f6f6f6" Height="300" Width="320" ResizeMode="NoResize" Initialized="Window_Initialized">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="278*"/>
@@ -27,17 +27,24 @@
                 <Label  Content="{Binding Y}"  ContentStringFormat ="当前Y的坐标:{0:F0}" />
                 <Label  Content="{Binding Z}"  ContentStringFormat ="当前Z的坐标:{0:F0}" />
                 <Label  Content="{Binding RunWait}"  ContentStringFormat ="电机运动等待:{0:F0}" />
-                <Label x:Name="LenLabel"  Content="{Binding Camera}"  ContentStringFormat ="当前的位移台:{0:F0}" />
+                <Label x:Name="LenLabel"  Content="{Binding Len}"  ContentStringFormat ="当前的位移台:{0:F0}" />
 
 
 
             </StackPanel>
-            <DockPanel HorizontalAlignment="Left" VerticalAlignment="Top">
-                <Button Height="30" Width="30"   Content="连接" Click="Len_Ini"/>
-                <Button Height="30" Width="30"   Content="读取" Click="Len_Read"/>
-                <Button Height="30" Width="64"   Content="更换物镜" Click="Move_Click" Tag="Change"/>
+            <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top">
+                <DockPanel >
+                    <!--<Button Height="30" Width="30"   Content="连接" Click="Len_Ini"/>
+                <Button Height="30" Width="30"   Content="读取" Click="Len_Read"/>-->
+                    <Button Height="30" Width="64"   Content="更换物镜" Click="Move_Click" Tag="Change"/>
+                </DockPanel>
+                <Button Height="30" Width="64"   Content="更换物镜1" Click="Move_Click" Tag="Change-"/>
 
-            </DockPanel>
+                <Button Height="30" Width="64"   Content="完整更换" Click="Move_Click" Tag="Change1"/>
+
+            </StackPanel>
+
+
 
             <Grid Height="150" Width="150" VerticalAlignment="Top" HorizontalAlignment="Right">
                 <Grid.ColumnDefinitions>
@@ -93,9 +100,9 @@
                 <Button Grid.Column="3" Grid.Row="1" Template="{StaticResource imageButtonTemplate}" Click="Move_Click"  Tag="X+"  Margin="-10,-10,0,-10">
                     <Image Source="images/right1.png"/>
                 </Button>
-                
-                
-                
+
+
+
 
             </Grid>
 

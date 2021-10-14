@@ -73,6 +73,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Global.cs" />
     <Compile Include="IniFiles.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
@@ -106,9 +107,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\USBHelper\USBDLL.csproj">
+    <ProjectReference Include="..\USBHelper\Motor.csproj">
       <Project>{3d103034-6a34-4641-9801-c567b55945e4}</Project>
-      <Name>USBDLL</Name>
+      <Name>Motor</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
